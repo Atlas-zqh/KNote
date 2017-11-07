@@ -1,13 +1,19 @@
 <template>
   <div class="menu-wrapper">
-    <el-radio-group v-model="isCollapse" style="margin-bottom: 20px;">
-      <el-radio-button :label="false">展开</el-radio-button>
-      <el-radio-button :label="true">收起</el-radio-button>
-    </el-radio-group>
-
-
-    <el-menu class="menu-vertical" @open="handleOpen" @close="handleClose"
+    <el-menu class="menu-vertical"
              :collapse="isCollapse">
+      <div class="notebook-indicator">
+        <div v-if="!isCollapse">
+          <span>我的笔记本</span>
+          <el-button type="text" size="mini" icon="arrow-left"
+                     style="float: right; padding-top: 6px; padding-right: 5px" @click="handleOpen"></el-button>
+        </div>
+        <div v-else v-model="isCollapse">
+          <span style="size: 5px">笔记本</span>
+          <el-button type="text" size="mini" icon="arrow-right"
+                     style="float: right; padding-top: 6px; padding-right: 0px" @click="handleOpen"></el-button>
+        </div>
+      </div>
 
       <el-submenu index="1">
         <template slot="title">
@@ -26,8 +32,7 @@
         <el-menu-item index="1-2">选项2</el-menu-item>
         <el-menu-item index="1-2">选项2</el-menu-item>
         <el-menu-item index="1-2">选项2</el-menu-item>
-        <el-menu-item index="1-2">选项2</el-menu-item>
-        <el-menu-item index="1-3">选项3</el-menu-item>
+
         <el-submenu index="1-4">
           <span slot="title">选项4</span>
           <el-menu-item index="1-4-1">选项1</el-menu-item>
@@ -42,54 +47,58 @@
         <i class="el-icon-setting"></i>
         <span slot="title">导航三</span>
       </el-menu-item>
+
     </el-menu>
 
-    <div :class="workbenchWrapper">
-
-
-    </div>
   </div>
 </template>
 
 <script>
-  import { RadioGroup, RadioButton, Menu, SubMenu, MenuItemGroup, MenuItem } from 'element-ui'
+  import {
+    RadioGroup,
+    RadioButton,
+    Menu,
+    Submenu,
+    MenuItemGroup,
+    MenuItem,
+    Breadcrumb,
+    BreadcrumbItem
+  } from 'element-ui'
+  import { mapMutations } from 'vuex'
+  import ElButton from '../../../node_modules/element-ui/packages/button/src/button.vue'
 
   export default {
     name: 'sideBar',
     components: {
+      ElButton,
       elRadioGroup: RadioGroup,
       elRadioButton: RadioButton,
       elMenu: Menu,
-      elSubMenu: SubMenu,
+      elSubmenu: Submenu,
       elMenuItemGroup: MenuItemGroup,
-      elMenuItem: MenuItem
+      elMenuItem: MenuItem,
+      elBreadcrumb: Breadcrumb,
+      elBreadcrumbItem: BreadcrumbItem
     },
     data () {
       return {
-        isCollapse: false,
-        small_collapse: true
+        isCollapse: false
       }
     },
-    computed: {
-      workbenchWrapper: function () {
-        return {
-          'workbench-wrapper-no-collapse': !this.isCollapse,
-          'workbench-wrapper-collapse': this.isCollapse
-        }
-      }
-    },
+    computed: {},
     methods: {
-      handleOpen (key, keyPath) {
-        console.log(key, keyPath)
-      },
-      handleClose (key, keyPath) {
-        console.log(key, keyPath)
+      ...mapMutations([
+        'changeCollapse'
+      ]),
+      handleOpen () {
+        this.isCollapse = !this.isCollapse
+        this.changeCollapse()
       }
     }
   }
 </script>
 
-<style>
+<style scoped>
 
   .menu-wrapper {
     /*display: inline-block;*/
@@ -98,43 +107,32 @@
   }
 
   .menu-vertical:not(.el-menu--collapse) {
-    width: 20%;
+    width: 16%;
     min-height: 400px;
-    height: 80%;
+    height: 94%;
     position: fixed;
-    top: 116px;
+    top: 60px;
     overflow: scroll;
     background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
   }
 
   .el-menu--collapse {
-    text-align: center;
+    /*text-align: center;*/
     min-height: 400px;
-    height: 80%;
-    width: 6%;
+    height: 94%;
+    width: 8%;
     position: fixed;
-    top: 116px;
+    top: 60px;
     background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+    z-index: 1;
   }
 
   .el-submenu /deep/ .el-menu {
     background-color: #f6f6f6;
   }
 
-  .workbench-wrapper-no-collapse {
-    display: inline-block;
-    margin-left: 240px;
-    width: 80%;
-    height: 500px;
-    background-color: red;
-  }
-
-  .workbench-wrapper-collapse {
-    display: inline-block;
-    margin-left: 6%;
-    width: 94%;
-    height: 500px;
-    background-color: red;
+  .notebook-indicator {
+    padding: 8px 15px;
   }
 
 </style>

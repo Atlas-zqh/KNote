@@ -1,15 +1,10 @@
 <template>
   <div class="main-page-wrapper">
     <menu-bar></menu-bar>
-    <!--<div class="body-wrapper">-->
     <main-carousel></main-carousel>
-
     <main-medium-bar class="foot-wrapper"></main-medium-bar>
     <main-card class="card-wrapper"></main-card>
     <main-foot></main-foot>
-
-
-    <!--</div>-->
   </div>
 </template>
 
@@ -32,13 +27,7 @@
   }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  /*.body-wrapper {*/
-    /*height: 1000px;*/
-    /*text-align: center;*/
-  /*}*/
-
   .main-page-wrapper {
     text-align: center;
   }
