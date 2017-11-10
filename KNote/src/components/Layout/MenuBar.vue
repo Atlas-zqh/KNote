@@ -123,5 +123,10 @@
     color: rgb(83, 113, 96);
   }
 
+  /*.el-input-group__append .el-button, .el-input-group__append .el-input, .el-input-group__prepend .el-button, .el-input-group__prepend .el-input {*/
+    /*font-size: 13px;*/
+    /*width: 101px;*/
+  /*}*/
+
 
 </style>
