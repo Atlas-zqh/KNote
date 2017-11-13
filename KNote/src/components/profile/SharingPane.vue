@@ -56,17 +56,7 @@
 </script>
 
 <style scoped>
-  .pane-out-wrapper {
-    margin-top: 20px;
-    width: 81%;
-    min-width: 800px;
-    height: auto;
-    min-height: 550px;
-    margin-left: auto;
-    margin-right: auto;
-    background-color: rgba(238, 246, 242, 0.28);
-    /*background-color: red;*/
-  }
+  @import "../style/ProfilePaneOutWrapper.css";
 
   .pane-inner-wrapper {
     padding-top: 5%;

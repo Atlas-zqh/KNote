@@ -1,10 +1,11 @@
 <template>
-  <!--<div style="width: 100%;text-align: center">-->
   <div class="profile-header-bkg">
     <div class="user-info-wrapper">
-      <!--<div class="col-wrapper">-->
 
-      <div class="username-wrapper">{{username}}
+      <div class="username-wrapper">
+        <a :href="'/#/profile'">
+          {{username}}
+        </a>
         <el-button v-if="!followed" type="primary" class="follow-button-wrapper" @click="follow">+ 关注</el-button>
         <el-button v-else class="follow-button-wrapper" @click="unfollow">取消关注</el-button>
       </div>
@@ -16,7 +17,9 @@
         </el-col>
         <el-col :span="4">
           <div class="grid-content">
-            <span class="num-font-wrapper">{{notebooks}}</span>
+            <a :href="'/#/profile/notebooks'">
+              <span class="num-font-wrapper">{{notebooks}}</span>
+            </a>
             <span class="type-font-wrapper">笔记本</span>
           </div>
         </el-col>
@@ -28,13 +31,17 @@
         </el-col>
         <el-col :span="4">
           <div class="grid-content">
-            <span class="num-font-wrapper">{{following}}</span>
+            <a :href="'/#/profile/friends'">
+              <span class="num-font-wrapper">{{following}}</span>
+            </a>
             <span class="type-font-wrapper">关注</span>
           </div>
         </el-col>
         <el-col :span="4">
           <div class="grid-content">
-            <span class="num-font-wrapper">{{followers}}</span>
+            <a :href="'/#/profile/friends'">
+              <span class="num-font-wrapper">{{followers}}</span>
+            </a>
             <span class="type-font-wrapper">粉丝</span>
           </div>
         </el-col>
@@ -77,8 +84,6 @@
 
 <style scoped>
   .profile-header-bkg {
-    /*text-align: center;*/
-    /*background-color: #50bfff;*/
     background-image: linear-gradient(to bottom, rgba(246, 246, 246, 0.7) 0%, rgba(246, 246, 246, 0.7) 100%), url('../../assets/user-bkg.png');
     background-size: cover;
     background-repeat: no-repeat;
@@ -89,8 +94,6 @@
     height: 250px;
     margin-left: auto;
     margin-right: auto;
-    /*position: relative;*/
-    /*display: inline-block;*/
   }
 
   .user-info-wrapper {
@@ -104,10 +107,6 @@
   }
 
   .grid-content {
-    /*position: relative;*/
-    /*text-align: center;*/
-    /*display: inline-block;*/
-    /*border-radius: 4px;*/
     min-height: 20px;
     min-width: 70px;
   }
@@ -151,5 +150,17 @@
     position: absolute;
     top: 50%;
     transform: translate(0, 50%);
+  }
+
+  a:link,
+  a:visited {
+    color: #000000;
+    text-decoration: none;
+  }
+
+  a:hover,
+  a:active {
+    color: #000000;
+    text-decoration: none;
   }
 </style>

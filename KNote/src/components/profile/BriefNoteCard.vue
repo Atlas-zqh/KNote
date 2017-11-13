@@ -2,7 +2,7 @@
   <div style="width: 100%;margin-left: 5%">
     <el-card class="box-card">
       <div slot="header" class="clearfix">
-        <a :href="'/'">
+        <a :href="'/#/'">
           <span style="line-height: 36px; font-weight: bold;">{{title}}</span>
         </a>
         <br>
