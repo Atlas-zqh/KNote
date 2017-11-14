@@ -17,6 +17,7 @@
             <div class="notify-wrapper2">
               <i class="el-icon-ali-my"></i>
               关于我
+              <el-button type="text" class="operation-wrapper" @click="jumpToProfileEdit">修改个人信息</el-button>
             </div>
             <brief-intro></brief-intro>
           </div>
@@ -35,12 +36,13 @@
 </template>
 
 <script>
-  import ElButton from '../../../node_modules/element-ui/packages/button/src/button.vue'
-  import BriefNoteCard from './BriefNoteCard.vue'
-  import HotContent from './HotContent.vue'
-  import BriefIntro from './BriefIntro.vue'
+  import ElButton from '../../../../node_modules/element-ui/packages/button/src/button.vue'
+  import BriefNoteCard from '../BriefNoteCard.vue'
+  import HotContent from '../HotContent.vue'
+  import BriefIntro from '../BriefIntro.vue'
   import ElRow from 'element-ui/packages/row/src/row'
   import ElCol from 'element-ui/packages/col/src/col'
+  import router from '../../../router'
 
   export default {
     components: {
@@ -51,12 +53,17 @@
       HotContent,
       BriefIntro
     },
-    name: 'sharingPane'
+    name: 'sharingPane',
+    methods: {
+      jumpToProfileEdit () {
+        router.push('/profile/edit')
+      }
+    }
   }
 </script>
 
 <style scoped>
-  @import "../style/ProfilePaneOutWrapper.css";
+  @import "../../style/ProfilePaneOutWrapper.css";
 
   .pane-inner-wrapper {
     padding-top: 5%;
@@ -77,6 +84,13 @@
     text-align: left;
     margin-left: 15%;
     margin-bottom: 4.1%;
+  }
+
+  .operation-wrapper {
+    float: right;
+    padding-right: 18%;
+    font-size: small;
+    padding-top: 4px;
   }
 
 </style>

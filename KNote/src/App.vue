@@ -23,4 +23,9 @@
     color: #2c3e50;
     /*margin-top: 60px;*/
   }
+
+  .v-modal {
+    z-index: 1999 !important;
+  }
+
 </style>

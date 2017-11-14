@@ -30,7 +30,7 @@
 </template>
 
 <script>
-  import FriendsBriefIntro from './FriendsBriefIntro.vue'
+  import FriendsBriefIntro from '../FriendsBriefIntro.vue'
 
   export default {
     components: {FriendsBriefIntro},
@@ -39,7 +39,8 @@
 </script>
 
 <style scoped>
-  @import "../style/ProfilePaneOutWrapper.css";
+  @import "../../style/ProfilePaneOutWrapper.css";
+  @import "../../../assets/icon/iconfont.css";
 
   .pane-inner-wrapper {
     padding-top: 5%;

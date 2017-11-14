@@ -96,6 +96,8 @@
       var checkUserName = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入用户名'))
+        } else if (!/^[0-9A-z]+$/.test(value)) {
+          callback(new Error('用户名只能包含大小写英文和数字'))
         } else {
           callback()
         }

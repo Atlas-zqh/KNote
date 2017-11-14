@@ -11,7 +11,7 @@
   import MenuBar from '../components/Layout/MenuBar.vue'
   import MainFoot from '../components/Layout/MainFoot.vue'
   import ProfileHeader from '../components/profile/ProfileHeader.vue'
-  import SharingPane from '../components/profile/SharingPane.vue'
+  import SharingPane from '../components/profile/panes/SharingPane.vue'
   import ElButton from '../../node_modules/element-ui/packages/button/src/button.vue'
 
   export default {
@@ -27,8 +27,5 @@
 </script>
 
 <style scoped>
-  .profile-header-wrapper {
-    margin-top: 20px;
-    z-index: 1;
-  }
+  @import "../components/style/ProfileHeaderWrapper.css";
 </style>

@@ -25,7 +25,9 @@
         </el-col>
         <el-col :span="4">
           <div class="grid-content">
-            <span class="num-font-wrapper">{{notes}}</span>
+            <a :href="'/#/profile/notes'">
+              <span class="num-font-wrapper">{{notes}}</span>
+            </a>
             <span class="type-font-wrapper">笔记</span>
           </div>
         </el-col>

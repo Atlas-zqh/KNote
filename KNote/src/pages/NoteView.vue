@@ -2,7 +2,7 @@
   <div>
     <menu-bar></menu-bar>
     <profile-header class="profile-header-wrapper"></profile-header>
-    <friends-pane></friends-pane>
+    <note-view-pane></note-view-pane>
     <main-foot></main-foot>
   </div>
 </template>
@@ -10,20 +10,21 @@
 <script>
   import MenuBar from '../components/Layout/MenuBar.vue'
   import MainFoot from '../components/Layout/MainFoot.vue'
+  import NoteViewPane from '../components/profile/panes/NoteViewPane.vue'
   import ProfileHeader from '../components/profile/ProfileHeader.vue'
-  import FriendsPane from '../components/profile/panes/FriendsPane.vue'
 
   export default {
     components: {
-      FriendsPane,
+      ProfileHeader,
+      NoteViewPane,
       MainFoot,
-      MenuBar,
-      ProfileHeader
+      MenuBar
     },
-    name: 'friendsPage'
+    name: 'noteView'
   }
 </script>
 
 <style scoped>
   @import "../components/style/ProfileHeaderWrapper.css";
+
 </style>

@@ -10,7 +10,7 @@
 <script>
   import MenuBar from '../components/Layout/MenuBar.vue'
   import ProfileHeader from '../components/profile/ProfileHeader.vue'
-  import NotebookPane from '../components/profile/NotebookPane.vue'
+  import NotebookPane from '../components/profile/panes/NotebookPane.vue'
   import MainFoot from '../components/Layout/MainFoot.vue'
 
   export default {
@@ -25,8 +25,5 @@
 </script>
 
 <style scoped>
-  .profile-header-wrapper {
-    margin-top: 20px;
-    z-index: 1;
-  }
+  @import "../components/style/ProfileHeaderWrapper.css";
 </style>
