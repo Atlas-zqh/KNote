@@ -17,26 +17,27 @@
 
     <div class="pane-out-wrapper">
       <div class="pane-inner-wrapper">
-        <el-form :label-position="labelPosition" :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px">
+        <el-form :label-position="labelPosition" :model="modifyRuleForm" :rules="modifyRule" ref="ruleForm2"
+                 label-width="100px">
           <el-form-item label="用户名" prop="username">
-            <el-input type="text" v-model="username" :disabled="true" auto-complete="off">
+            <el-input type="text" v-model="modifyRuleForm.username" auto-complete="off">
             </el-input>
           </el-form-item>
           <el-form-item label="性别" prop="gender">
-            <el-radio-group v-model="ruleForm2.gender">
+            <el-radio-group v-model="modifyRuleForm.gender">
               <el-radio label="男"></el-radio>
               <el-radio label="女"></el-radio>
               <el-radio label="保密"></el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="密码" prop="pass">
-            <el-input type="password" v-model="ruleForm2.pass" auto-complete="off"></el-input>
+            <el-input type="password" v-model="modifyRuleForm.pass" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="确认密码" prop="checkPass">
-            <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off"></el-input>
+            <el-input type="password" v-model="modifyRuleForm.checkPass" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item label="邮箱" prop="email">
-            <el-input type="text" v-model="ruleForm2.email" auto-complete="off"></el-input>
+            <el-input type="text" v-model="modifyRuleForm.email" :disabled="true" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item class="submit-button-wrapper">
             <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
@@ -67,8 +68,8 @@
         if (value === '') {
           callback(new Error('请输入密码'))
         } else {
-          if (this.ruleForm2.checkPass !== '') {
-            this.$refs.ruleForm2.validateField('checkPass')
+          if (this.modifyRuleForm.checkPass !== '') {
+            this.$refs.modifyRuleForm.validateField('checkPass')
           }
           callback()
         }
@@ -76,40 +77,41 @@
       var validatePass2 = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请再次输入密码'))
-        } else if (value !== this.ruleForm2.pass) {
+        } else if (value !== this.modifyRuleForm.pass) {
           callback(new Error('两次输入密码不一致!'))
         } else {
           callback()
         }
       }
-      var validateEmail = (rule, value, callback) => {
+      var validateUsername = (rule, value, callback) => {
         if (value === '') {
-          callback(new Error('请输入电子邮箱'))
-        } else if (!/^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/.test(value)) {
-          callback(new Error('电子邮箱格式不正确'))
+          callback(new Error('请输入用户名'))
+        } else if (!/^[0-9A-z]+$/.test(value)) {
+          callback(new Error('用户名只能包含大小写英文和数字'))
         } else {
           callback()
         }
       }
+
       return {
-        username: 'Keenan',
         labelPosition: 'top',
         imageUrl: '',
-        ruleForm2: {
+        modifyRuleForm: {
           pass: '',
           checkPass: '',
           gender: '',
+          username: '',
           email: ''
         },
-        rules2: {
+        modifyRule: {
           pass: [
             {validator: validatePass, trigger: 'blur'}
           ],
           checkPass: [
             {validator: validatePass2, trigger: 'blur'}
           ],
-          email: [
-            {validator: validateEmail, trigger: 'blur'}
+          username: [
+            {validator: validateUsername, trigger: 'blur'}
           ]
         }
       }

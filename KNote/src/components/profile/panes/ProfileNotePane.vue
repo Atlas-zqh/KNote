@@ -22,12 +22,8 @@
             <hot-content></hot-content>
           </div>
         </el-col>
-
-
       </el-row>
-
     </div>
-
   </div>
 </template>
 

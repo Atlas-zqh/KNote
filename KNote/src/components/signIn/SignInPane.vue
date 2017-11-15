@@ -13,8 +13,8 @@
           <el-tab-pane label="登录" name="sign-in">
             <div class="sign-in-form-wrapper">
               <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="ruleForm">
-                <el-form-item label="用户名" prop="username">
-                  <el-input v-model="ruleForm2.username" auto-complete="off"></el-input>
+                <el-form-item label="邮箱" prop="email">
+                  <el-input v-model="ruleForm2.email" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="密码" prop="pass">
                   <el-input type="password" v-model="ruleForm2.pass" auto-complete="off"></el-input>
@@ -32,6 +32,9 @@
           <el-tab-pane label="注册" name="sign-up">
             <div class="sign-up-form-wrapper">
               <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="ruleForm">
+                <el-form-item label="邮箱" prop="email">
+                  <el-input v-model="ruleForm2.email" auto-complete="off"></el-input>
+                </el-form-item>
                 <el-form-item label="用户名" prop="username">
                   <el-input v-model="ruleForm2.username" auto-complete="off"></el-input>
                 </el-form-item>
@@ -41,6 +44,7 @@
                 <el-form-item label="确认密码" prop="checkPass">
                   <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off"></el-input>
                 </el-form-item>
+
                 <div class="button-wrapper">
                   <el-form-item>
                     <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
@@ -103,12 +107,23 @@
         }
       }
 
+      var checkEmail = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入邮箱'))
+        } else if (!/^[a-z0-9]+([._\\-]*[a-z0-9])*@([a-z0-9]+[-a-z0-9]*[a-z0-9]+.){1,63}[a-z0-9]+$/.test(value)) {
+          callback(new Error('电子邮箱格式不正确'))
+        } else {
+          callback()
+        }
+      }
+
       return {
         activeName: 'sign-in',
         ruleForm2: {
           pass: '',
           checkPass: '',
-          username: ''
+          username: '',
+          email: ''
         },
         rules2: {
           pass: [
@@ -119,6 +134,9 @@
           ],
           username: [
             {validator: checkUserName, trigger: 'blur'}
+          ],
+          email: [
+            {validator: checkEmail, trigger: 'blur'}
           ]
         }
       }
@@ -166,14 +184,14 @@
   }
 
   .sign-up-form-wrapper {
-    padding-top: 30px;
+    padding-top: 20px;
     width: 90%;
     /*text-align: center;*/
   }
 
   .sign-in-form-wrapper {
     width: 90%;
-    padding-top: 50px;
+    padding-top: 70px;
   }
 
   .sign-in-pane-wrapper .vertical_logo {
@@ -186,7 +204,7 @@
   }
 
   .sign-in-pane-wrapper /deep/ .el-tabs__header {
-    padding-top: 30px;
+    padding-top: 15px;
     width: 30%;
     margin: 0 auto;
     text-align: center;
