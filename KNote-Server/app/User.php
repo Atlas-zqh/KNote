@@ -9,7 +9,9 @@ class User extends Authenticatable
 {
     use Notifiable;
 
-    protected $table='users';
+    protected $table = 'users';
+
+    protected $primaryKey='user_id';
 
     /**
      * The attributes that are mass assignable.
@@ -17,7 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password','gender','pic_url'
+        'name', 'email', 'password', 'gender', 'pic_url', 'permission', 'notebooks_count', 'notes_count', 'follow_count', 'fans_count', 'is_valid'
     ];
 
     /**
@@ -32,7 +34,8 @@ class User extends Authenticatable
     /**
      * @return mixed
      */
-    public function getJWTIdentifier(){
+    public function getJWTIdentifier()
+    {
         return $this->getKey();
     }
 

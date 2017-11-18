@@ -67,6 +67,8 @@
       var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'))
+        } else if (!/^(?![^a-zA-Z]+$)(?!\D+$)/.test(value) && value.length < 6) {
+          callback(new Error('密码长度至少六位，且包含一个数字和一个字母'))
         } else {
           if (this.modifyRuleForm.checkPass !== '') {
             this.$refs.modifyRuleForm.validateField('checkPass')

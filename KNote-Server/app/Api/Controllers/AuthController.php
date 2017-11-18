@@ -53,4 +53,18 @@ class AuthController extends BaseController
         // the token is valid and we have found the user via the sub claim
         return response()->json(compact('user'));
     }
+
+    public function register(Request $request)
+    {
+        $registerInfo = $request->only('username', 'email', 'password');
+        $registerInfo["password"] = Hash::make($registerInfo["password"]);
+        if (User::where('name', $registerInfo["username"])) {
+            return response()->json(['error' => '用户名已被注册！']);
+        } else if (User::where('email', $registerInfo["email"])) {
+            return response()->json(['error' => '邮箱已被注册！']);
+        } else {
+            User::create($registerInfo);
+            return response()->json(['success' => '注册成功！']);
+        }
+    }
 }

@@ -9,20 +9,20 @@
         <div class="img-wrapper">
           <img src="../../assets/logo_with_word_vertical.png" class="vertical_logo"/>
         </div>
-        <el-tabs v-model="activeName" @tab-click="handleClick">
+        <el-tabs v-model="activeName">
           <el-tab-pane label="登录" name="sign-in">
             <div class="sign-in-form-wrapper">
-              <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="ruleForm">
-                <el-form-item label="邮箱" prop="email">
-                  <el-input v-model="ruleForm2.email" auto-complete="off"></el-input>
+              <el-form :model="loginForm" :rules="loginRule" ref="loginForm" label-width="100px" class="ruleForm">
+                <el-form-item label="邮箱" prop="loginEmail">
+                  <el-input v-model="loginForm.loginEmail" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="密码" prop="pass">
-                  <el-input type="password" v-model="ruleForm2.pass" auto-complete="off"></el-input>
+                <el-form-item label="密码" prop="loginPass">
+                  <el-input type="password" v-model="loginForm.loginPass" auto-complete="off"></el-input>
                 </el-form-item>
                 <div class="button-wrapper">
                   <el-form-item>
-                    <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
-                    <el-button @click="cancel('ruleForm2')">取消</el-button>
+                    <el-button type="primary" @click="submitLoginForm('loginForm')">登录</el-button>
+                    <el-button @click="cancel('loginForm')">取消</el-button>
                   </el-form-item>
                 </div>
               </el-form>
@@ -31,24 +31,24 @@
           </el-tab-pane>
           <el-tab-pane label="注册" name="sign-up">
             <div class="sign-up-form-wrapper">
-              <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="100px" class="ruleForm">
+              <el-form :model="signUpForm" :rules="signUpRule" ref="signUpForm" label-width="100px" class="ruleForm">
                 <el-form-item label="邮箱" prop="email">
-                  <el-input v-model="ruleForm2.email" auto-complete="off"></el-input>
+                  <el-input v-model="signUpForm.email" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="用户名" prop="username">
-                  <el-input v-model="ruleForm2.username" auto-complete="off"></el-input>
+                  <el-input v-model="signUpForm.username" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="密码" prop="pass">
-                  <el-input type="password" v-model="ruleForm2.pass" auto-complete="off"></el-input>
+                  <el-input type="password" v-model="signUpForm.pass" auto-complete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="确认密码" prop="checkPass">
-                  <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off"></el-input>
+                  <el-input type="password" v-model="signUpForm.checkPass" auto-complete="off"></el-input>
                 </el-form-item>
 
                 <div class="button-wrapper">
                   <el-form-item>
-                    <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
-                    <el-button @click="cancel('ruleForm2')">取消</el-button>
+                    <el-button type="primary" @click="submitRegisterForm('signUpForm')">注册</el-button>
+                    <el-button @click="cancel('signUpForm')">取消</el-button>
                   </el-form-item>
                 </div>
               </el-form>
@@ -80,9 +80,11 @@
       var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'))
+        } else if (!/^(?![^a-zA-Z]+$)(?!\D+$)/.test(value) || value.length < 6) {
+          callback(new Error('密码长度至少六位，且包含一个数字和一个字母'))
         } else {
-          if (this.ruleForm2.checkPass !== '') {
-            this.$refs.ruleForm2.validateField('checkPass')
+          if (this.signUpForm.checkPass !== '') {
+            this.$refs.signUpForm.validateField('checkPass')
           }
           callback()
         }
@@ -90,7 +92,7 @@
       var validatePass2 = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请再次输入密码'))
-        } else if (value !== this.ruleForm2.pass) {
+        } else if (value !== this.signUpForm.pass) {
           callback(new Error('两次输入密码不一致!'))
         } else {
           callback()
@@ -117,15 +119,25 @@
         }
       }
 
+      var checkLoginPass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入密码'))
+        } else if (!/^(?![^a-zA-Z]+$)(?!\D+$)/.test(value) || value.length < 6) {
+          callback(new Error('密码长度至少六位，且包含一个数字和一个字母'))
+        } else {
+          callback()
+        }
+      }
+
       return {
         activeName: 'sign-in',
-        ruleForm2: {
+        signUpForm: {
           pass: '',
           checkPass: '',
           username: '',
           email: ''
         },
-        rules2: {
+        signUpRule: {
           pass: [
             {validator: validatePass, trigger: 'blur'}
           ],
@@ -138,14 +150,39 @@
           email: [
             {validator: checkEmail, trigger: 'blur'}
           ]
+        },
+        loginForm: {
+          loginEmail: '',
+          loginPass: ''
+        },
+        loginRule: {
+          loginEmail: [
+            {validator: checkEmail, trigger: 'blur'}
+          ],
+          loginPass: [
+            {validator: checkLoginPass, trigger: 'blur'}
+          ]
         }
       }
     },
     methods: {
-      sign_up () {
-        this.$modal.hide('sign-in')
+      submitLoginForm (formName) {
+        this.$refs[formName].validate((valid) => {
+          console.log(formName)
+          console.log(this.loginForm.loginPass)
+          console.log(this.loginForm.loginEmail)
+          if (valid) {
+            this.$message({
+              message: '登录成功',
+              type: 'success'
+            })
+          } else {
+            console.log('error submit!!')
+            return false
+          }
+        })
       },
-      submitForm (formName) {
+      submitRegisterForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             alert('submit!')
@@ -157,12 +194,10 @@
       },
       cancel (formName) {
         this.$refs[formName].resetFields()
+//        console.log('close successfully')
         this.$modal.hide('sign-in')
-      },
-
-      handleClick (tab, event) {
-        console.log(tab, event)
       }
+
     }
   }
 </script>
