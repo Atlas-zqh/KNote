@@ -13,8 +13,6 @@ class Notebook extends Model
      */
     protected $table = 'notebooks';
 
-    protected $primaryKey = 'notebook_id';
-
     protected $fillable = [
         'user_id', 'notebook_name', 'notes_count', 'is_valid', 'permission'
     ];

@@ -64,6 +64,7 @@ class AuthController extends BaseController
             return response()->json(['error' => '邮箱已被注册！']);
         } else {
             User::create($registerInfo);
+
             return response()->json(['success' => '注册成功！']);
         }
     }

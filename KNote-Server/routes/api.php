@@ -26,5 +26,9 @@ $api->version('v1', function ($api) {
         $api->group(['middleware' => 'jwt.auth'], function ($api) {
             $api->get('user/me', 'AuthController@getAuthenticatedUser');
         });
+
+        $api->get('user/{userId}/frequentTags', 'UserController@getFrequentTags');
+        $api->get('user/{userId}/hotNotes', 'UserController@getHotNotes');
+        $api->get('user/{userId}/countInfo','UserController@getCountInfo');
     });
 });

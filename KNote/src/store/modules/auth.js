@@ -35,12 +35,32 @@ const actions = {
         onSuccess(state.user.username)
       }
     }, token)
+  },
+  signOut ({commit}, {onSuccess}) {
+    const username = state.user.username
+    localStorage.setItem('token', null)
+    commit('saveUser', null)
+    if (onSuccess) {
+      onSuccess(username)
+    }
+  },
+  refreshUser ({dispatch}, {onSuccess}) {
+    const token = localStorage.getItem('token')
+    if (token !== null) {
+      dispatch('fetchUser', onSuccess)
+    }
   }
 }
 
 const mutations = {
   'saveUser' (state, user) {
     state.user = user
+  },
+  'setSignedIn' (state) {
+    state.isSignedIn = true
+  },
+  'setSignedUp' (state) {
+    state.isSignedIn = false
   }
 }
 
