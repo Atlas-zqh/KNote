@@ -6,187 +6,45 @@
         笔记本
       </div>
       <el-row class="notebook-row-wrapper" :gutter="50">
-        <el-col :span="6">
-          <div @click="handleClick">
-            <el-card>
-              <div class="text item">
-                <div class="notebook-name-wrapper">
-                  {{noteBookTitle}}
-                </div>
-                <div class="notebook-info-wrapper">
-                  共 {{noteCount}} 篇笔记
-                </div>
-                <div class="notebook-info-wrapper">
-                  最新修改于
-                </div>
-                <div class="notebook-info-wrapper">
-                  {{updateTime}}
-                </div>
-              </div>
-            </el-card>
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div>
-            <el-card>
-              <div class="text item">
-                <div class="notebook-name-wrapper">
-                  {{noteBookTitle}}
-                </div>
-                <div class="notebook-info-wrapper">
-                  共 {{noteCount}} 篇笔记
-                </div>
-                <div class="notebook-info-wrapper">
-                  最新修改于
-                </div>
-                <div class="notebook-info-wrapper">
-                  {{updateTime}}
-                </div>
-              </div>
-            </el-card>
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div>
-            <el-card>
-              <div class="text item">
-                <div class="notebook-name-wrapper">
-                  {{noteBookTitle}}
-                </div>
-                <div class="notebook-info-wrapper">
-                  共 {{noteCount}} 篇笔记
-                </div>
-                <div class="notebook-info-wrapper">
-                  最新修改于
-                </div>
-                <div class="notebook-info-wrapper">
-                  {{updateTime}}
-                </div>
-              </div>
-            </el-card>
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div>
-            <el-card>
-              <div class="text item">
-                <div class="notebook-name-wrapper">
-                  {{noteBookTitle}}
-                </div>
-                <div class="notebook-info-wrapper">
-                  共 {{noteCount}} 篇笔记
-                </div>
-                <div class="notebook-info-wrapper">
-                  最新修改于
-                </div>
-                <div class="notebook-info-wrapper">
-                  {{updateTime}}
-                </div>
-              </div>
-            </el-card>
-          </div>
-        </el-col>
+        <brief-notebook-card v-for="notebook in notebooks" :briefNotebook="notebook"></brief-notebook-card>
       </el-row>
-      <el-row class="notebook-row-wrapper" :gutter="50">
-        <el-col :span="6">
-          <div>
-            <el-card>
-              <div class="text item">
-                <div class="notebook-name-wrapper">
-                  {{noteBookTitle}}
-                </div>
-                <div class="notebook-info-wrapper">
-                  共 {{noteCount}} 篇笔记
-                </div>
-                <div class="notebook-info-wrapper">
-                  最新修改于
-                </div>
-                <div class="notebook-info-wrapper">
-                  {{updateTime}}
-                </div>
-              </div>
-            </el-card>
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div>
-            <el-card>
-              <div class="text item">
-                <div class="notebook-name-wrapper">
-                  {{noteBookTitle}}
-                </div>
-                <div class="notebook-info-wrapper">
-                  共 {{noteCount}} 篇笔记
-                </div>
-                <div class="notebook-info-wrapper">
-                  最新修改于
-                </div>
-                <div class="notebook-info-wrapper">
-                  {{updateTime}}
-                </div>
-              </div>
-            </el-card>
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div>
-            <el-card>
-              <div class="text item">
-                <div class="notebook-name-wrapper">
-                  {{noteBookTitle}}
-                </div>
-                <div class="notebook-info-wrapper">
-                  共 {{noteCount}} 篇笔记
-                </div>
-                <div class="notebook-info-wrapper">
-                  最新修改于
-                </div>
-                <div class="notebook-info-wrapper">
-                  {{updateTime}}
-                </div>
-              </div>
-            </el-card>
-          </div>
-        </el-col>
-        <el-col :span="6">
-          <div>
-            <el-card>
-              <div class="text item">
-                <div class="notebook-name-wrapper">
-                  {{noteBookTitle}}
-                </div>
-                <div class="notebook-info-wrapper">
-                  共 {{noteCount}} 篇笔记
-                </div>
-                <div class="notebook-info-wrapper">
-                  最新修改于
-                </div>
-                <div class="notebook-info-wrapper">
-                  {{updateTime}}
-                </div>
-              </div>
-            </el-card>
-          </div>
-        </el-col>
-      </el-row>
+      <div v-show="notebooks.length==0" class="text item">暂无笔记本</div>
     </div>
   </div>
 </template>
 
 <script>
   import router from '../../../router'
+  import BriefNotebookCard from '../BriefNotebookCard.vue'
+  import { mapActions, mapState } from 'vuex'
 
   export default {
-    components: {},
+    components: {BriefNotebookCard},
     name: 'notebookPane',
     data () {
-      return {
-        noteBookTitle: '2017游记',
-        noteCount: '20',
-        updateTime: '2017/11/12 20:08'
-      }
+      return {}
+    },
+    created () {
+      this.fetchCurUserNotebooks({
+        userId: this.userInfo[0].id,
+        onSuccess: () => {},
+        onError: (msg) => {
+          this.$message.error(msg)
+        }
+      })
+    },
+    computed: {
+      ...mapState('notebook', {
+        notebooks: state => state.curUserNotebooks
+      }),
+      ...mapState('user', {
+        userInfo: state => state.info
+      })
     },
     methods: {
+      ...mapActions('notebook', [
+        'fetchCurUserNotebooks'
+      ]),
       handleClick () {
         router.push('/profile/notes')
       }

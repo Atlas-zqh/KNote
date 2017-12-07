@@ -19,37 +19,37 @@ export default new Router({
       component: MainPage
     },
     {
-      path: '/workbench',
+      path: '/workbench/:userId',
       name: 'workbench',
       component: workbench
     },
     {
-      path: '/profile',
+      path: '/profile/user/:userId',
       name: 'userProfile',
       component: userProfile
     },
     {
-      path: '/profile/notebooks',
+      path: '/profile/notebooks/:userId',
       name: 'notebooks',
       component: notebooks
     },
     {
-      path: '/profile/notes',
+      path: '/profile/notes/:userId',
       name: 'notes',
       component: profileNotes
     },
     {
-      path: '/profile/friends',
+      path: '/profile/friends/:userId',
       name: 'friends',
       component: friendsPage
     },
     {
-      path: '/profile/noteview',
+      path: '/profile/noteview/:noteId',
       name: 'noteview',
       component: noteView
     },
     {
-      path: '/profile/edit',
+      path: '/profile/edit/',
       name: 'profileEdit',
       component: profileEdit
     }

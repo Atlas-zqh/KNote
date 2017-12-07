@@ -17,31 +17,42 @@
 
     <div class="pane-out-wrapper">
       <div class="pane-inner-wrapper">
-        <el-form :label-position="labelPosition" :model="modifyRuleForm" :rules="modifyRule" ref="ruleForm2"
+        <el-form :label-position="labelPosition" :model="modifyInfo" :rules="modifyInfoRule" ref="infoForm"
                  label-width="100px">
           <el-form-item label="用户名" prop="username">
-            <el-input type="text" v-model="modifyRuleForm.username" auto-complete="off">
+            <el-input type="text" v-model="modifyInfo.username" auto-complete="off">
             </el-input>
           </el-form-item>
           <el-form-item label="性别" prop="gender">
-            <el-radio-group v-model="modifyRuleForm.gender">
+            <el-radio-group v-model="modifyInfo.gender">
               <el-radio label="男"></el-radio>
               <el-radio label="女"></el-radio>
               <el-radio label="保密"></el-radio>
             </el-radio-group>
           </el-form-item>
-          <el-form-item label="密码" prop="pass">
-            <el-input type="password" v-model="modifyRuleForm.pass" auto-complete="off"></el-input>
-          </el-form-item>
-          <el-form-item label="确认密码" prop="checkPass">
-            <el-input type="password" v-model="modifyRuleForm.checkPass" auto-complete="off"></el-input>
-          </el-form-item>
           <el-form-item label="邮箱" prop="email">
-            <el-input type="text" v-model="modifyRuleForm.email" :disabled="true" auto-complete="off"></el-input>
+            <el-input type="text" v-model="modifyInfo.email" :disabled="true" auto-complete="off"></el-input>
           </el-form-item>
           <el-form-item class="submit-button-wrapper">
-            <el-button type="primary" @click="submitForm('ruleForm2')">提交</el-button>
-            <el-button @click="resetForm('ruleForm2')">重置</el-button>
+            <el-button type="primary" @click="submitInfoForm('infoForm')">提交</el-button>
+            <el-button @click="resetForm('infoForm')">重置</el-button>
+          </el-form-item>
+        </el-form>
+
+        <el-form :label-position="labelPosition" :model="modifyPass" :rules="modifyPassRule" ref="passForm"
+                 label-width="100px">
+          <el-form-item label="原密码" prop="oldPass">
+            <el-input type="password" v-model="modifyPass.oldPass" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="密码" prop="pass">
+            <el-input type="password" v-model="modifyPass.pass" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="确认密码" prop="checkPass">
+            <el-input type="password" v-model="modifyPass.checkPass" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item class="submit-button-wrapper">
+            <el-button type="primary" @click="submitPassForm('passForm')">提交</el-button>
+            <el-button @click="resetForm('passForm')">重置</el-button>
           </el-form-item>
         </el-form>
       </div>
@@ -55,31 +66,39 @@
   import ElFormItem from '../../../../node_modules/element-ui/packages/form/src/form-item.vue'
   import ElInput from '../../../../node_modules/element-ui/packages/input/src/input.vue'
   import ElRadio from '../../../../node_modules/element-ui/packages/radio/src/radio.vue'
+  import ElForm from '../../../../node_modules/element-ui/packages/form/src/form.vue'
+  import { mapActions } from 'vuex'
 
   export default {
     components: {
+      ElForm,
       ElRadio,
       ElInput,
       ElFormItem
     },
     name: 'profileModifyPane',
+    props: ['userInfo'],
     data () {
+      var validateOldPass = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('请输入原密码'))
+        } else {
+          callback()
+        }
+      }
       var validatePass = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请输入密码'))
-        } else if (!/^(?![^a-zA-Z]+$)(?!\D+$)/.test(value) && value.length < 6) {
+        } else if (!/^(?![^a-zA-Z]+$)(?!\D+$)/.test(value) || value.length < 6) {
           callback(new Error('密码长度至少六位，且包含一个数字和一个字母'))
         } else {
-          if (this.modifyRuleForm.checkPass !== '') {
-            this.$refs.modifyRuleForm.validateField('checkPass')
-          }
           callback()
         }
       }
       var validatePass2 = (rule, value, callback) => {
         if (value === '') {
           callback(new Error('请再次输入密码'))
-        } else if (value !== this.modifyRuleForm.pass) {
+        } else if (value !== this.modifyPass.pass) {
           callback(new Error('两次输入密码不一致!'))
         } else {
           callback()
@@ -98,22 +117,31 @@
       return {
         labelPosition: 'top',
         imageUrl: '',
-        modifyRuleForm: {
+        modifyInfo: {
+          gender: this.userInfo.gender,
+          username: this.userInfo.name,
+          email: this.userInfo.email
+
+        },
+        modifyInfoRule: {
+          username: [
+            {validator: validateUsername, trigger: 'blur'}
+          ]
+        },
+        modifyPass: {
           pass: '',
           checkPass: '',
-          gender: '',
-          username: '',
-          email: ''
+          oldPass: ''
         },
-        modifyRule: {
+        modifyPassRule: {
           pass: [
             {validator: validatePass, trigger: 'blur'}
           ],
           checkPass: [
             {validator: validatePass2, trigger: 'blur'}
           ],
-          username: [
-            {validator: validateUsername, trigger: 'blur'}
+          oldPass: [
+            {validator: validateOldPass, trigger: 'blur'}
           ]
         }
       }
@@ -134,22 +162,57 @@
         }
         return isJPG && isLt2M
       },
-      submitForm (formName) {
+      submitInfoForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            this.$message({
-              message: '修改个人信息成功 😄',
-              type: 'success'
+            this.editUserInfo({
+              userInfo: this.modifyInfo,
+              onSuccess: () => {
+                this.$message({
+                  message: '修改个人信息成功 😄',
+                  type: 'success'
+                })
+              },
+              onError: (msg) => {
+                this.$refs[formName].resetFields()
+                this.$message.error(msg)
+              }
             })
           } else {
-            this.$message.error('修改个人信息失败 🙁')
-            return false
+            this.$refs[formName].resetFields()
+            this.$message.error('修改失败 🙁 请检查输入')
+          }
+        })
+      },
+      submitPassForm (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.editUserPass({
+              password: this.modifyPass,
+              onSuccess: () => {
+                this.$refs[formName].resetFields()
+                this.$message({
+                  message: '修改密码成功 😄',
+                  type: 'success'
+                })
+              },
+              onError: (msg) => {
+                this.$refs[formName].resetFields()
+                this.$message.error(msg)
+              }
+            })
+          } else {
+            this.$refs[formName].resetFields()
+            this.$message.error('修改失败 🙁 请检查输入')
           }
         })
       },
       resetForm (formName) {
         this.$refs[formName].resetFields()
-      }
+      },
+      ...mapActions('auth', [
+        'editUserInfo', 'editUserPass'
+      ])
     }
   }
 </script>
@@ -218,7 +281,7 @@
   }
 
   .submit-button-wrapper {
-    margin-top: 40px;
+    margin-top: 20px;
     text-align: center;
   }
 </style>

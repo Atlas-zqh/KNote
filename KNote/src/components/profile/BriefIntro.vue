@@ -3,44 +3,55 @@
     <el-card class="box-card">
       <div class="text item">
         <i class="el-icon-ali-mail"></i>
-        e-mail : {{email}}
+        e-mail : {{userInfo[0].email}}
       </div>
       <div class="text item">
         <i class="el-icon-ali-gender"></i>
-        性别 : {{gender}}
+        性别 : {{userInfo[0].gender}}
       </div>
       <div class="text item">
         <i class="el-icon-ali-tag"></i>
         常用标签 :
-        <el-tag
-          v-for="tag in tags"
-          :key="tag.name"
-          :closable="false"
-          :type="tag.type"
-        >
-          {{tag.name}}
-        </el-tag>
+        <span v-if="frequentTags.length>0">
+          <el-tag
+            v-for="tag in frequentTags"
+            :key="tag.tag_content"
+            :closable="false"
+            :type="tagType"
+          >
+            {{tag.tag_content}}
+          </el-tag>
+        </span>
+        <span class="item" v-show="frequentTags.length==0">暂无常用标签</span>
       </div>
     </el-card>
   </div>
 </template>
 
 <script>
+  import { mapState, mapActions } from 'vuex'
+
   export default {
     name: 'hotContent',
     data () {
       return {
-        email: 'zqhatlas@gmail.com',
-        gender: '男',
-        tags: [
-          {name: '标签一', type: 'warning'},
-          {name: '标签二', type: 'warning'},
-          {name: '标签三', type: 'warning'},
-          {name: '标签四', type: 'warning'},
-          {name: '标签五', type: 'warning'},
-          {name: '标签六', type: 'warning'}
-        ]
+        userId: this.$route.params.userId,
+        tagType: 'warning'
       }
+    },
+    created () {
+      this.fetchFrequentTags(this.userId)
+    },
+    computed: {
+      ...mapState('user', {
+        userInfo: state => state.info,
+        frequentTags: state => state.frequentTags
+      })
+    },
+    methods: {
+      ...mapActions('user', [
+        'fetchFrequentTags'
+      ])
     }
   }
 </script>

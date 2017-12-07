@@ -1,13 +1,14 @@
 <template>
   <div>
-    <el-menu default-active=1      class="el-menu-demo" mode="horizontal" @select="handleSelect">
+    <el-menu default-active=1     class="el-menu-demo" mode="horizontal"
+             @select="handleSelect">
       <div class="nav-wrapper">
         <div class="logo-wrapper" @click="jumpToIndex">
           <img src="../../assets/logo_with_word.png" width="100px"/>
         </div>
         <div class="search-bar-wrapper">
           <el-input placeholder="搜索内容" v-model="search_input">
-            <el-select v-model="select" slot="prepend" placeholder="搜素范围">
+            <el-select v-model="select" slot="prepend" placeholder="搜索范围">
               <el-option label="全部笔记" value="1"></el-option>
               <el-option label="当前笔记" value="2"></el-option>
               <el-option label="笔记本" value="3"></el-option>
@@ -16,13 +17,21 @@
             <el-button slot="append" icon="search"></el-button>
           </el-input>
         </div>
-        <el-menu-item index="3" @click="sign_in">登录</el-menu-item>
+        <el-menu-item v-if="this.user==null" index="3" @click="sign_in">登录</el-menu-item>
+        <el-submenu v-else index="4">
+          <template slot="title">我的</template>
+          <el-menu-item index="4-1" @click="jumpToMyPage">个人主页</el-menu-item>
+          <el-menu-item index="4-2" @click="goSignOut">退出登录</el-menu-item>
+        </el-submenu>
+
+
         <el-submenu index="2">
           <template slot="title">我的工作台</template>
-          <el-menu-item index="2-2" @click="show_chooseNoteBook=true">创建新笔记</el-menu-item>
+          <el-menu-item index="2-1" @click="jumpToWorkbench">进入工作台</el-menu-item>
+          <el-menu-item index="2-2" @click="showChooseNotebook">创建新笔记</el-menu-item>
           <el-menu-item index="2-3" @click="jumpToMyNotes">我的笔记</el-menu-item>
           <el-menu-item index="2-4" @click="jumpToMyNotebooks">我的笔记本</el-menu-item>
-          <el-menu-item index="2-5">我的标签</el-menu-item>
+          <!--<el-menu-item index="2-5">我的标签</el-menu-item>-->
         </el-submenu>
         <el-menu-item index="1" @click="jumpToIndex">首页</el-menu-item>
       </div>
@@ -61,6 +70,7 @@
   import SignInPane from '../signIn/SignInPane.vue'
   import router from '../../router'
   import ElDialog from '../../../node_modules/element-ui/packages/dialog/src/component.vue'
+  import { mapState, mapActions } from 'vuex'
 
   export default {
     name: 'menuBar',
@@ -76,6 +86,14 @@
       elButton: Button,
       SignInPane
     },
+    computed: {
+      ...mapState('auth', {
+        user: state => state.user
+      }),
+      ...mapState('notebook', {
+        myNotebooks: state => state.myNotebooks
+      })
+    },
     data () {
       return {
         search_input: '',
@@ -84,29 +102,22 @@
         options: [],
         value: [],
         list: [],
-        loading: false,
-        states: ['吃', '吃好的', 'Arizona',
-          'Arkansas', 'Addddd', 'Addccmc', 'Admddd', 'Aodjdd', 'Addmdckc', 'California', 'Colorado',
-          'Connecticut', 'Delaware', 'Florida',
-          'Georgia', 'Hawaii', 'Idaho', 'Illinois',
-          'Indiana', 'Iowa', 'Kansas', 'Kentucky',
-          'Louisiana', 'Maine', 'Maryland',
-          'Massachusetts', 'Michigan', 'Minnesota',
-          'Mississippi', 'Missouri', 'Montana',
-          'Nebraska', 'Nevada', 'New Hampshire',
-          'New Jersey', 'New Mexico', 'New York',
-          'North Carolina', 'North Dakota', 'Ohio',
-          'Oklahoma', 'Oregon', 'Pennsylvania',
-          'Rhode Island', 'South Carolina',
-          'South Dakota', 'Tennessee', 'Texas',
-          'Utah', 'Vermont', 'Virginia',
-          'Washington', 'West Virginia', 'Wisconsin',
-          'Wyoming']
+        loading: false
       }
     },
+    created () {
+      this.refreshUser({
+        onSuccess: () => {}
+      })
+    },
     mounted () {
-      this.list = this.states.map(item => {
-        return {value: item, label: item}
+      this.fetchMyNotebooks({
+        userId: this.user.id,
+        onSuccess: () => {},
+        onError: (msg) => this.$message.error(msg)
+      })
+      this.list = this.myNotebooks.map(item => {
+        return {value: item.id, label: item.notebook_name}
       })
     },
     methods: {
@@ -116,16 +127,44 @@
       sign_in () {
         this.$modal.show('sign-in')
       },
+      showChooseNotebook () {
+        if (this.user == null) {
+          this.$modal.show('sign-in')
+        } else {
+          this.show_chooseNoteBook = true
+        }
+      },
       jumpToIndex () {
         router.push('/')
       },
       jumpToMyNotebooks () {
-        router.push('/profile/notebooks')
+        if (this.user == null) {
+          this.$modal.show('sign-in')
+        } else {
+          router.push({name: 'notebooks', params: {userId: this.user.id}})
+        }
+      },
+      jumpToWorkbench () {
+        if (this.user == null) {
+          this.$modal.show('sign-in')
+        } else {
+          router.push({name: 'workbench', params: {userId: this.user.id}})
+        }
       },
       jumpToMyNotes () {
-        router.push('/profile/notes')
+        if (this.user == null) {
+          this.$modal.show('sign-in')
+        } else {
+          router.push({name: 'notes', params: {userId: this.user.id}})
+        }
+      },
+      jumpToMyPage () {
+        console.log('bbb' + this.user.id)
+        this.fetchUserInfo(this.user.id)
+        router.push({name: 'userProfile', params: {userId: this.user.id}})
       },
       remoteMethod (query) {
+        console.log(this.list)
         if (query !== '') {
           this.loading = true
           setTimeout(() => {
@@ -138,7 +177,27 @@
         } else {
           this.options = []
         }
-      }
+      },
+      goSignOut () {
+        this.signOut({
+          onSuccess: (username) => {
+            this.$message({
+              message: 'Bye, ' + username + '!',
+              type: 'success'
+            })
+            router.push('/')
+          }
+        })
+      },
+      ...mapActions('auth', [
+        'refreshUser', 'signOut'
+      ]),
+      ...mapActions('notebook', [
+        'fetchMyNotebooks'
+      ]),
+      ...mapActions('user', [
+        'fetchUserInfo'
+      ])
     }
   }
 </script>

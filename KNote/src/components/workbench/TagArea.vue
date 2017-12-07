@@ -1,14 +1,13 @@
 <template>
   <div id="tag_area">
-    <el-tag
-      :key="tag.name"
-      :type="tag.type"
-      v-for="tag in dynamicTags"
-      :closable="true"
-      :close-transition="false"
-      @close="handleClose(tag)"
+    <el-tag v-if="workbenchNote!==null"
+            :type="tagType"
+            v-for="tag in workbenchNote.tags"
+            :closable="true"
+            :close-transition="false"
+            @close="handleClose(tag)"
     >
-      {{tag.name}}
+      {{tag.tag_content}}
     </el-tag>
 
     <el-input
@@ -22,27 +21,45 @@
       maxlength="7"
     >
     </el-input>
-    <el-button v-else class="button-new-tag" size="small" @click="showInput" v-show="notUpToMax">+ New Tag</el-button>
+    <el-button v-else class="button-new-tag" size="small" @click="showInput"
+               v-show="workbenchNote==null||workbenchNote.tags.length<=6">
+      + 新标签
+    </el-button>
   </div>
 
 </template>
 
 <script>
+  import { mapState, mapActions, mapMutations } from 'vuex'
+
   export default {
     name: 'tagArea',
     data () {
       return {
-        dynamicTags: [{name: '游记', type: 'primary'},
-          {name: '2017', type: 'primary'},
-          {name: '夏天', type: 'primary'}],
+        tagType: 'primary',
         inputVisible: false,
         inputValue: '',
         notUpToMax: true
       }
     },
+    computed: {
+      ...mapState('note', {
+        workbenchNote: state => state.workbenchNote
+      })
+    },
     methods: {
       handleClose (tag) {
-        this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+        console.log(tag)
+        this.removeTag(tag)
+        this.deleteTagRelation({
+          noteId: this.workbenchNote.note.id,
+          relationId: tag.relationId,
+          onSuccess: () => {
+          },
+          onError: (msg) => {
+            this.$message.error(msg)
+          }
+        })
       },
 
       showInput () {
@@ -55,20 +72,27 @@
       handleInputConfirm () {
         let inputValue = this.inputValue
         if (inputValue) {
-          this.dynamicTags.push({name: inputValue, type: 'primary'})
+          this.addTagRelation({
+            noteId: this.workbenchNote.note.id,
+            tagContent: inputValue,
+            onSuccess: () => {
+            },
+            onError: (msg) => {
+              this.$message.error(msg)
+            }
+          })
         }
         this.inputVisible = false
         this.inputValue = ''
-      }
-    },
-    watch: {
-      dynamicTags: function () {
-        if (this.dynamicTags.length >= 7) {
-          this.notUpToMax = false
-        } else {
-          this.notUpToMax = true
-        }
-      }
+      },
+      ...mapActions('note', [
+        'deleteTagRelation',
+        'addTagRelation'
+      ]),
+      ...mapMutations('note', [
+        'removeTag',
+        'addTag'
+      ])
     }
   }
 </script>

@@ -3,11 +3,13 @@
     <div class="user-info-wrapper">
 
       <div class="username-wrapper">
-        <a :href="'/#/profile'">
-          {{username}}
+        <a @click="jumpToUser">
+          {{this.userInfo[0].name}}
         </a>
-        <el-button v-if="!followed" type="primary" class="follow-button-wrapper" @click="follow">+ 关注</el-button>
-        <el-button v-else class="follow-button-wrapper" @click="unfollow">取消关注</el-button>
+        <div v-show="user!=null&&user.id!=userId">
+          <el-button v-if="!followed" type="primary" class="follow-button-wrapper" @click="follow">+ 关注</el-button>
+          <el-button v-else class="follow-button-wrapper" @click="unfollow">取消关注</el-button>
+        </div>
       </div>
 
       <el-row :gutter="20">
@@ -17,32 +19,32 @@
         </el-col>
         <el-col :span="4">
           <div class="grid-content">
-            <a :href="'/#/profile/notebooks'">
-              <span class="num-font-wrapper">{{notebooks}}</span>
+            <a @click="jumpToNotebooks">
+              <span class="num-font-wrapper">{{this.userInfo[0].notebooks_count}}</span>
             </a>
             <span class="type-font-wrapper">笔记本</span>
           </div>
         </el-col>
         <el-col :span="4">
           <div class="grid-content">
-            <a :href="'/#/profile/notes'">
-              <span class="num-font-wrapper">{{notes}}</span>
+            <a @click="jumpToNotes">
+              <span class="num-font-wrapper">{{this.userInfo[0].notes_count}}</span>
             </a>
             <span class="type-font-wrapper">笔记</span>
           </div>
         </el-col>
         <el-col :span="4">
           <div class="grid-content">
-            <a :href="'/#/profile/friends'">
-              <span class="num-font-wrapper">{{following}}</span>
+            <a @click="jumpToFans">
+              <span class="num-font-wrapper">{{this.userInfo[0].follow_count}}</span>
             </a>
             <span class="type-font-wrapper">关注</span>
           </div>
         </el-col>
         <el-col :span="4">
           <div class="grid-content">
-            <a :href="'/#/profile/friends'">
-              <span class="num-font-wrapper">{{followers}}</span>
+            <a @click="jumpToFans">
+              <span class="num-font-wrapper">{{this.userInfo[0].fans_count}}</span>
             </a>
             <span class="type-font-wrapper">粉丝</span>
           </div>
@@ -57,18 +59,29 @@
 
 <script>
   import ElButton from '../../../node_modules/element-ui/packages/button/src/button.vue'
+  import { mapState, mapActions } from 'vuex'
+  import router from '../../router'
 
   export default {
     name: 'profileHeader',
+    props: ['curUserId'],
     data () {
       return {
-        followed: false,
-        notebooks: 7,
-        notes: 233,
-        following: 250,
-        followers: 1770,
-        username: 'Keenan'
+        userId: this.curUserId,
+        followed: false
       }
+    },
+    created () {
+//      console.log(this.userId)
+      this.fetchUserInfo(this.userId)
+    },
+    computed: {
+      ...mapState('user', {
+        userInfo: state => state.info
+      }),
+      ...mapState('auth', {
+        user: state => state.user
+      })
     },
     components: {ElButton},
     methods: {
@@ -79,7 +92,24 @@
       unfollow () {
         this.followed = false
         this.followers -= 1
-      }
+      },
+      jumpToUser () {
+        router.push({name: 'userProfile', params: {userId: this.userId}})
+      },
+      jumpToNotebooks () {
+        console.log(this.user.id)
+        console.log(this.userId)
+        router.push({name: 'notebooks', params: {userId: this.userId}})
+      },
+      jumpToNotes () {
+        router.push({name: 'notes', params: {userId: this.userId}})
+      },
+      jumpToFans () {
+        router.push({name: 'friends', params: {userId: this.userId}})
+      },
+      ...mapActions('user', [
+        'fetchUserInfo'
+      ])
     }
   }
 </script>
@@ -148,7 +178,7 @@
   }
 
   .follow-button-wrapper {
-    margin-left: 30px;
+    margin-left: 220px;
     position: absolute;
     top: 50%;
     transform: translate(0, 50%);

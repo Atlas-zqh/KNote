@@ -1,8 +1,8 @@
 <template>
   <div>
     <menu-bar></menu-bar>
-    <profile-header class="profile-header-wrapper"></profile-header>
-    <sharing-pane></sharing-pane>
+    <profile-header class="profile-header-wrapper" :curUserId="this.userId"></profile-header>
+    <sharing-pane :curUserId="this.userId"></sharing-pane>
     <main-foot></main-foot>
   </div>
 </template>
@@ -22,6 +22,11 @@
       MainFoot,
       ProfileHeader,
       SharingPane
+    },
+    data () {
+      return {
+        userId: this.$route.params.userId
+      }
     }
   }
 </script>

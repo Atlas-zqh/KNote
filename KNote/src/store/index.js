@@ -4,6 +4,9 @@ import Vuex from 'vuex'
 // import * as getters from './getters'
 import WorkbenchEditor from './modules/WorkbenchEditor'
 import auth from './modules/auth'
+import user from './modules/user'
+import note from './modules/note'
+import notebook from './modules/notebook'
 import createLogger from 'vuex/dist/logger'
 
 Vue.use(Vuex)
@@ -15,7 +18,10 @@ export default new Vuex.Store({
   // getters,
   modules: {
     WorkbenchEditor,
-    auth
+    auth,
+    user,
+    note,
+    notebook
   },
   strict: debug,
   plugins: debug ? [createLogger()] : []

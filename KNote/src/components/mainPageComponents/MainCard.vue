@@ -6,7 +6,7 @@
         <el-card :body-style="{ padding: '10px' }">
           <img src="../../assets/desk.png" class="image">
           <div style="padding: 14px;">
-            <span>好吃的汉堡</span>
+            <span>随时随地<br>快速创建新笔记</span>
           </div>
         </el-card>
       </div>
@@ -17,7 +17,7 @@
         <el-card :body-style="{ padding: '10px' }">
           <img src="../../assets/cloud.png" class="image">
           <div style="padding: 14px;">
-            <span>好吃的汉堡</span>
+            <span>云端实时存储<br>不再担心数据丢失</span>
           </div>
         </el-card>
       </div>
@@ -28,7 +28,7 @@
         <el-card :body-style="{ padding: '10px' }">
           <img src="../../assets/keyboard.png" class="image">
           <div style="padding: 14px;">
-            <span>好吃的汉堡</span>
+            <span>进入工作台<br>快速切换与创建笔记</span>
           </div>
         </el-card>
       </div>

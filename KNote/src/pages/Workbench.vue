@@ -6,9 +6,11 @@
     </div>
     <div :class="editorWrapper">
       <tag-area class="tag-wrapper"></tag-area>
-      <title-editor class="title-wrapper"></title-editor>
-      <vue-editor v-model="editor_content"></vue-editor>
+      <title-editor class="title-wrapper"
+                    v-model="title.title"></title-editor>
+      <vue-editor v-model="content.content"></vue-editor>
     </div>
+    <!--<el-button @click="showMessage">哈哈哈</el-button>-->
   </div>
 </template>
 
@@ -20,10 +22,13 @@
   import TagArea from '../components/workbench/TagArea.vue'
   import TitleEditor from '../components/workbench/TitleEditor.vue'
   import { store } from '../main'
+  import { mapState, mapActions } from 'vuex'
+  //  import ElButton from '../../node_modules/element-ui/packages/button/src/button.vue'
 
   export default {
     name: 'workbench',
     components: {
+//      ElButton,
       sideBar: sideBar,
       MenuBar,
       MainFoot,
@@ -38,13 +43,33 @@
           'workbench-wrapper-no-collapse': store.getters.isCollapsed,
           'workbench-wrapper-collapse': !store.getters.isCollapsed
         }
+      },
+      ...mapState('note', {
+        workbenchNote: state => state.workbenchNote
+      }),
+      content: function () {
+        return {
+          content: this.workbenchNote === null ? '<h1>Helloooooo!</h1>' : this.workbenchNote.note.content
+        }
+      },
+      title: function () {
+        var date = new Date()
+        var time = date.getFullYear() + '年' + (date.getMonth() + 1) + '月' + date.getDate() + '日' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+        return {
+          title: this.workbenchNote === null ? time + '的笔记' : this.workbenchNote.note.title
+        }
       }
     },
-
+    methods: {
+      ...mapActions('note', [
+        'setWorkbenchNoteNull'
+      ])
+    },
+    beforeDestroy (to, from, next) {
+      this.setWorkbenchNoteNull()
+    },
     data () {
-      return {
-        editor_content: '<h1>Hello!</h1>'
-      }
+      return {}
     }
   }
 </script>

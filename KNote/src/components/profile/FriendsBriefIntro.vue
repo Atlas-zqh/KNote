@@ -6,16 +6,16 @@
           <div class="user-pic-content"></div>
         </el-col>
         <el-col :span="7" class="friends-info-wrapper">
-          <div class="name-text-wrapper">
-            {{friendName}}
+          <div class="name-text-wrapper" @click="jumpToUserInfo">
+            {{this.friendInfo.name}}
           </div>
           <div class="fans-text-wrapper">
-            {{friendFans}} 位粉丝
+            {{this.friendInfo.fans_count}} 位粉丝
           </div>
         </el-col>
-        <el-col :span="7" class="button-col-wrapper">
-          <el-button class="button-wrapper">+ 关注</el-button>
-        </el-col>
+        <!--<el-col :span="7" class="button-col-wrapper">-->
+        <!--<el-button class="button-wrapper">+ 关注</el-button>-->
+        <!--</el-col>-->
       </el-row>
     </el-card>
   </div>
@@ -25,6 +25,7 @@
   import ElCard from '../../../node_modules/element-ui/packages/card/src/main.vue'
   import ElRow from 'element-ui/packages/row/src/row'
   import ElButton from '../../../node_modules/element-ui/packages/button/src/button.vue'
+  import router from '../../router'
 
   export default {
     components: {
@@ -33,10 +34,13 @@
       ElCard
     },
     name: 'friendsBriefIntro',
+    props: ['friendInfo'],
     data () {
-      return {
-        friendName: 'ISLAND2015282',
-        friendFans: '50'
+      return {}
+    },
+    methods: {
+      jumpToUserInfo () {
+        router.push({name: 'userProfile', params: {userId: this.friendInfo.id}})
       }
     }
   }
@@ -56,8 +60,9 @@
   }
 
   .name-text-wrapper {
+    width: 180px;
     text-align: left;
-    font-size: 120%;
+    font-size: 110%;
   }
 
   .friends-info-wrapper {
@@ -67,6 +72,7 @@
   }
 
   .fans-text-wrapper {
+    width: 180px;
     text-align: left;
     font-size: 14px;
     padding-top: 5%;

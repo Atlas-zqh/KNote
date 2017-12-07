@@ -1,7 +1,7 @@
 <template>
   <div>
     <menu-bar></menu-bar>
-    <profile-header class="profile-header-wrapper"></profile-header>
+    <profile-header class="profile-header-wrapper" :curUserId="this.userId"></profile-header>
     <notebook-pane></notebook-pane>
     <main-foot></main-foot>
   </div>
@@ -20,7 +20,12 @@
       MenuBar,
       ProfileHeader
     },
-    name: 'notebooks'
+    name: 'notebooks',
+    data () {
+      return {
+        userId: this.$route.params.userId
+      }
+    }
   }
 </script>
 

@@ -151,4 +151,9 @@
     color: #222;
   }
 
+  div#quill-container.ql-container.ql-snow {
+    height: 190px;
+    overflow: scroll;
+  }
+
 </style>

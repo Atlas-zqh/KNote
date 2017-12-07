@@ -2,7 +2,7 @@
   <div>
     <menu-bar></menu-bar>
     <!--<profile-header class="profile-header-wrapper"></profile-header>-->
-    <profile-modify-pane></profile-modify-pane>
+    <profile-modify-pane :userInfo="this.userInfo"></profile-modify-pane>
     <main-foot></main-foot>
   </div>
 </template>
@@ -12,6 +12,7 @@
   import ProfileHeader from '../components/profile/ProfileHeader.vue'
   import ProfileModifyPane from '../components/profile/panes/ProfileModifyPane.vue'
   import MainFoot from '../components/Layout/MainFoot.vue'
+  import { mapState } from 'vuex'
 
   export default {
     components: {
@@ -20,7 +21,12 @@
       ProfileHeader,
       MenuBar
     },
-    name: 'profileEdit'
+    name: 'profileEdit',
+    computed: {
+      ...mapState('auth', {
+        userInfo: state => state.user
+      })
+    }
   }
 </script>
 

@@ -65,6 +65,7 @@
 <script>
   import { Form, FormItem, Button, Tabs, TabPane } from 'element-ui'
   import ElInput from '../../../node_modules/element-ui/packages/input/src/input.vue'
+  import { mapActions, mapState } from 'vuex'
 
   export default {
     name: 'signInPane',
@@ -166,15 +167,24 @@
       }
     },
     methods: {
+      ...mapActions('auth', [
+        'signIn'
+      ]),
       submitLoginForm (formName) {
         this.$refs[formName].validate((valid) => {
-          console.log(formName)
-          console.log(this.loginForm.loginPass)
-          console.log(this.loginForm.loginEmail)
           if (valid) {
-            this.$message({
-              message: '登录成功',
-              type: 'success'
+            this.signIn({
+              body: {
+                email: this.loginForm.loginEmail,
+                password: this.loginForm.loginPass
+              },
+              onSuccess: (username) => {
+                this.confirmSignIn(username)
+              },
+              onError: () => {
+//                console.log(error)
+                this.$message.error('邮箱或密码错误，请重试！')
+              }
             })
           } else {
             console.log('error submit!!')
@@ -196,8 +206,22 @@
         this.$refs[formName].resetFields()
 //        console.log('close successfully')
         this.$modal.hide('sign-in')
+      },
+      confirmSignIn (username) {
+        console.log(this.user)
+        if (this.user !== null) {
+          this.$modal.hide('sign-in')
+          this.$message({
+            message: 'Hi, ' + username + '!',
+            type: 'success'
+          })
+        }
       }
-
+    },
+    computed: {
+      ...mapState('auth', {
+        user: state => state.user
+      })
     }
   }
 </script>

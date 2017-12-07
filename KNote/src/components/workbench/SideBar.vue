@@ -15,39 +15,14 @@
         </div>
       </div>
 
-      <el-submenu index="1">
+      <el-submenu v-for="notebook in this.notebookInfo" :index="notebook.id">
         <template slot="title">
-          <i class="el-icon-message"></i>
-          <span slot="title">导航一</span>
+          <i class="el-icon-document"></i>
+          <span slot="title">{{notebook.notebook_name}}</span>
         </template>
-        <el-menu-item index="1-1">选项1</el-menu-item>
-        <el-menu-item index="1-2">选项2</el-menu-item>
-        <el-menu-item index="1-2">选项2</el-menu-item>
-        <el-menu-item index="1-2">选项2</el-menu-item>
-        <el-menu-item index="1-2">选项2</el-menu-item>
-        <el-menu-item index="1-2">选项2</el-menu-item>
-        <el-menu-item index="1-2">选项2</el-menu-item>
-        <el-menu-item index="1-2">选项2</el-menu-item>
-        <el-menu-item index="1-2">选项2</el-menu-item>
-        <el-menu-item index="1-2">选项2</el-menu-item>
-        <el-menu-item index="1-2">选项2</el-menu-item>
-        <el-menu-item index="1-2">选项2</el-menu-item>
-
-        <el-submenu index="1-4">
-          <span slot="title">选项4</span>
-          <el-menu-item index="1-4-1">选项1</el-menu-item>
-        </el-submenu>
+        <el-menu-item v-for="note in notebook.notes" :index="note.id" @click="handleChosen(note.id)">{{note.title}}
+        </el-menu-item>
       </el-submenu>
-
-      <el-menu-item index="2">
-        <i class="el-icon-menu"></i>
-        <span slot="title">导航二</span>
-      </el-menu-item>
-      <el-menu-item index="3">
-        <i class="el-icon-setting"></i>
-        <span slot="title">导航三</span>
-      </el-menu-item>
-
     </el-menu>
 
   </div>
@@ -64,8 +39,9 @@
     Breadcrumb,
     BreadcrumbItem
   } from 'element-ui'
-  import { mapMutations } from 'vuex'
+  import { mapMutations, mapActions, mapState } from 'vuex'
   import ElButton from '../../../node_modules/element-ui/packages/button/src/button.vue'
+  import router from '../../router'
 
   export default {
     name: 'sideBar',
@@ -82,17 +58,49 @@
     },
     data () {
       return {
-        isCollapse: false
+        isCollapse: false,
+        userId: this.$route.params.userId
       }
     },
-    computed: {},
+
+    computed: {
+      ...mapState('notebook', {
+        notebookInfo: state => state.allNotebooks
+      })
+    },
+    created () {
+      this.fetchNotebooksAndNotes({
+        userId: this.userId,
+        onSuccess: (data) => {},
+        onError: (msg) => {
+          this.$message.error(msg)
+          router.push('/')
+        }
+      })
+    },
     methods: {
       ...mapMutations([
         'changeCollapse'
       ]),
+      ...mapActions('notebook', [
+        'fetchNotebooksAndNotes'
+      ]),
+      ...mapActions('note', [
+        'fetchWorkbenchNoteDetail'
+      ]),
       handleOpen () {
         this.isCollapse = !this.isCollapse
         this.changeCollapse()
+      },
+      handleChosen (index) {
+        console.log(index)
+        this.fetchWorkbenchNoteDetail({
+          noteId: index,
+          onSuccess: (detail) => {},
+          onError: (msg) => {
+            this.$message.error(msg)
+          }
+        })
       }
     }
   }
@@ -123,12 +131,14 @@
     width: 8%;
     position: fixed;
     top: 60px;
+    /*overflow: scroll;*/
     background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
     z-index: 1;
   }
 
   .el-submenu /deep/ .el-menu {
     background-color: #f6f6f6;
+    /*overflow: scroll;*/
   }
 
   .notebook-indicator {

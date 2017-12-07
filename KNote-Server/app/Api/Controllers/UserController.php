@@ -9,6 +9,8 @@
 namespace App\Api\Controllers;
 
 
+use App\Follow;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -37,7 +39,8 @@ class UserController extends BaseController
             ->select(DB::raw('notes.id, notes.title, count(*) as like_cnt'))
             ->where([
                 ['notes.user_id', '=', $userId],
-                ['notes.permission', '=', 'public']
+                ['notes.permission', '=', 'public'],
+                ['notes.is_valid', '=', true]
             ])->groupBy('notes.id')
             ->orderBy('like_cnt', 'desc')
             ->limit(10)
@@ -50,11 +53,47 @@ class UserController extends BaseController
     public function getCountInfo(Request $request)
     {
         $userId = $request->userId;
-        $notebooks_cnt = DB::table('notebooks')->where('user_id', $userId)->count();
-        $notes_cnt = DB::table('notes')->where('user_id' , $userId)->count();
+        $notebooks_cnt = DB::table('notebooks')->where([
+            ['user_id', $userId],
+            ['is_valid', true]
+        ])->count();
+        $notes_cnt = DB::table('notes')->where([
+            ['user_id', $userId],
+            ['is_valid', true]
+        ])->count();
         $fans_cnt = DB::table('follows')->where('followed_user_id', $userId)->count();
         $following_cnt = DB::table('follows')->where('follow_user_id', $userId)->count();
 
         return response()->json([['notebooks_cnt' => $notebooks_cnt], ['notes_cnt' => $notes_cnt], ['fans_cnt' => $fans_cnt], ['following_cnt' => $following_cnt]]);
     }
+
+    public function getUserInfo(Request $request)
+    {
+        $userId = $request->userId;
+        $user = DB::table('users')->where('id', $userId)->get();
+        return json_encode(['user' => $user], JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getFollowers(Request $request)
+    {
+        $userId = $request->userId;
+        $followers = DB::table('users')
+            ->join('follows', 'follows.follow_user_id', '=', 'users.id')
+            ->select('users.id', 'users.name', 'users.fans_count')
+            ->where('follows.followed_user_id', $userId)
+            ->get();
+        return json_encode($followers, JSON_UNESCAPED_UNICODE);
+    }
+
+    public function getFollowing(Request $request)
+    {
+        $userId = $request->userId;
+        $followers = DB::table('users')
+            ->join('follows', 'follows.followed_user_id', '=', 'users.id')
+            ->select('users.id', 'users.name', 'users.fans_count')
+            ->where('follows.follow_user_id', $userId)
+            ->get();
+        return json_encode($followers, JSON_UNESCAPED_UNICODE);
+    }
+
 }

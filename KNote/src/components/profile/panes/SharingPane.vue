@@ -7,17 +7,20 @@
             <i class="el-icon-ali-calendar"></i>
             最新动态
           </div>
-          <brief-note-card></brief-note-card>
-          <brief-note-card></brief-note-card>
-          <brief-note-card></brief-note-card>
-          <brief-note-card></brief-note-card>
+          <div v-if="latestNotes.length>0">
+            <brief-note-card v-for="note in this.latestNotes"
+                             :briefNote="note"></brief-note-card>
+          </div>
+          <div v-show="latestNotes.length==0" class="text item">暂无新动态</div>
         </el-col>
         <el-col :span="10">
           <div>
             <div class="notify-wrapper2">
               <i class="el-icon-ali-my"></i>
               关于我
-              <el-button type="text" class="operation-wrapper" @click="jumpToProfileEdit">修改个人信息</el-button>
+              <el-button v-if="this.user.id==this.userId" type="text" class="operation-wrapper"
+                         @click="jumpToProfileEdit">修改个人信息
+              </el-button>
             </div>
             <brief-intro></brief-intro>
           </div>
@@ -43,6 +46,7 @@
   import ElRow from 'element-ui/packages/row/src/row'
   import ElCol from 'element-ui/packages/col/src/col'
   import router from '../../../router'
+  import { mapState, mapActions } from 'vuex'
 
   export default {
     components: {
@@ -54,10 +58,31 @@
       BriefIntro
     },
     name: 'sharingPane',
+    props: ['curUserId'],
+    data () {
+      return {
+        userId: this.curUserId
+      }
+    },
+    created () {
+      console.log('aaaa' + this.userId)
+      this.fetchLatestNotes(this.userId)
+    },
     methods: {
       jumpToProfileEdit () {
-        router.push('/profile/edit')
-      }
+        router.push({name: 'profileEdit'})
+      },
+      ...mapActions('note', [
+        'fetchLatestNotes'
+      ])
+    },
+    computed: {
+      ...mapState('note', {
+        latestNotes: state => state.latestNotes
+      }),
+      ...mapState('auth', {
+        user: state => state.user
+      })
     }
   }
 </script>
@@ -91,6 +116,16 @@
     padding-right: 18%;
     font-size: small;
     padding-top: 4px;
+  }
+
+  .text {
+    font-size: 14px;
+  }
+
+  .item {
+    padding: 5px 0;
+    margin-left: 15%;
+    float: left;
   }
 
 </style>
