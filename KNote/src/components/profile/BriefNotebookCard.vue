@@ -1,7 +1,7 @@
 <template>
   <el-col :span="6" style="padding-bottom: 20px">
     <div>
-      <el-card>
+      <el-card style="height: 235px">
         <div class="text item">
           <div class="notebook-name-wrapper">
             {{this.briefNotebook.notebook_name}}
@@ -33,7 +33,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   .text {
     font-size: 14px;
   }
@@ -43,9 +43,13 @@
   }
 
   .notebook-name-wrapper {
-    margin-top: 40%;
-    margin-bottom: 50%;
+    margin-top: 25%;
+    margin-bottom: 40%;
     font-weight: bold;
+    /*font-size: 1em;*/
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 
   .notebook-info-wrapper {

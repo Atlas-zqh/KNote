@@ -17,7 +17,7 @@
             <el-button slot="append" icon="search"></el-button>
           </el-input>
         </div>
-        <el-menu-item v-if="this.user==null" index="3" @click="sign_in">登录</el-menu-item>
+        <el-menu-item v-if="user==null" index="3" @click="sign_in">登录</el-menu-item>
         <el-submenu v-else index="4">
           <template slot="title">我的</template>
           <el-menu-item index="4-1" @click="jumpToMyPage">个人主页</el-menu-item>

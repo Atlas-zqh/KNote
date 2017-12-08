@@ -166,7 +166,7 @@ class NoteController extends BaseController
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function modifyNote(Request $request)
+    public function modifyNoteContent(Request $request)
     {
         $note_id = $request->note_id;
         $title = $request->note_title;
@@ -183,6 +183,35 @@ class NoteController extends BaseController
         return response()->json(['success' => '修改成功']);
     }
 
+    public function modifyNotePermission(Request $request)
+    {
+        $note_id = $request->id;
+        $permission = $request->permission;
+        $note = Note::find($note_id);
+
+        try {
+            if (!$user = JWTAuth::parseToken()->authenticate()) {
+                return response()->json(['error' => 'user_not_found'], 404);
+            } else {
+                if ((int)$user->id - (int)$note->user_id != 0) {
+                    return response()->json(['error' => '您无权修改该笔记权限'], 200);
+                } else {
+                    $note->permission = $permission;
+
+                    $note->save();
+
+                    return response()->json(['success' => '修改成功']);
+                }
+            }
+        } catch (TokenExpiredException $e) {
+            return response()->json(['error' => 'token_expired'], 200);
+        } catch (TokenInvalidException $e) {
+            return response()->json(['error' => 'token_invalid'], 200);
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'token_absent'], 200);
+        }
+
+    }
 
     /**
      * noteId
@@ -358,16 +387,6 @@ class NoteController extends BaseController
             ->get();
         return json_encode($tags, JSON_UNESCAPED_UNICODE);
     }
-
-//    /**
-//     * 传入的是要存储的笔记的tag
-//     * 删掉原来的，存新的即可
-//     * @param Request $request
-//     */
-//    public function modifyNoteTags(Request $request)
-//    {
-//
-//    }
 
     public function addTag(Request $request)
     {

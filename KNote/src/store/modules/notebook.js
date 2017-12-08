@@ -33,12 +33,30 @@ const actions = {
     let token = localStorage.getItem('token')
     notebookApi.getNotebooks((data) => {
       if (data.error !== undefined) {
-        onError(data.error)
+        if (onError) {
+          onError(data.error)
+        }
       } else {
+        console.log('success')
+        console.log('aaaa ' + userId)
         commit('saveCurUserNotebooks', data)
-        onSuccess(data)
+        console.log(data)
+        if (onSuccess) {
+          onSuccess(data)
+        }
       }
     }, token, userId)
+  },
+  addNewNotebook ({dispatch}, {newNotebookInfo, onSuccess, onError}) {
+    notebookApi.addNotebook((data) => {
+      if (data.error !== undefined) {
+        onError(data.error)
+      } else {
+        console.log(newNotebookInfo)
+        dispatch('fetchCurUserNotebooks', {userId: newNotebookInfo.userId})
+        onSuccess(data)
+      }
+    }, newNotebookInfo)
   }
 }
 

@@ -28,7 +28,7 @@ const actions = {
     }, token, noteId)
   },
   refreshNoteDetail ({dispatch}, {noteId, onSuccess, onError}) {
-    dispatch('fetchNoteDetail', noteId, onSuccess, onError)
+    dispatch('fetchNoteDetail', {noteId: noteId, onSuccess: onSuccess, onError: onError})
   },
   fetchWorkbenchNoteDetail ({commit}, {noteId, onSuccess, onError}) {
     let token = localStorage.getItem('token')
@@ -42,7 +42,7 @@ const actions = {
     }, token, noteId)
   },
   refreshWorkbenchNoteDetail ({dispatch}, {noteId, onSuccess, onError}) {
-    dispatch('fetchWorkbenchNoteDetail', noteId, onSuccess, onError)
+    dispatch('fetchWorkbenchNoteDetail', {noteId: noteId, onSuccess: onSuccess, onError: onError})
   },
   setWorkbenchNoteNull ({commit}) {
     commit('saveWorkbenchNote', null)
@@ -54,7 +54,7 @@ const actions = {
       if (data.error !== undefined) {
         onError(data.error)
       } else {
-        dispatch('refreshWorkbenchNoteDetail', noteId, onSuccess, onError)
+        dispatch('refreshWorkbenchNoteDetail', {noteId: noteId, onSuccess: onSuccess, onError: onError})
         onSuccess(data)
       }
     }, token, relationId)
@@ -67,7 +67,7 @@ const actions = {
       } else {
         console.log(data)
         commit('addTag', data)
-        dispatch('refreshWorkbenchNoteDetail', noteId, onSuccess, onError)
+        dispatch('refreshWorkbenchNoteDetail', {noteId: noteId, onSuccess: onSuccess, onError: onError})
         onSuccess(data)
       }
     }, token, noteId, tagContent)
@@ -78,10 +78,24 @@ const actions = {
       if (data.error !== undefined) {
         onError(data.error)
       } else {
-        dispatch('refreshLatestNotes', noteId)
+        dispatch('refreshLatestNotes', {noteId: noteId})
         onSuccess(data)
       }
     }, token, noteId)
+  },
+  editNotePermission ({dispatch, commit}, {newPermission, noteInfo, onSuccess, onError}) {
+    commit('editNotePermission', newPermission)
+    let token = localStorage.getItem('token')
+    noteApi.modifyNotePermission((data) => {
+      if (data.error !== undefined) {
+        let oldPermission = (newPermission === 'public') ? 'private' : 'public'
+        commit('editNotePermission', oldPermission)
+        onError(data.error)
+      } else {
+        dispatch('refreshNoteDetail', {noteId: noteInfo.id, onSuccess: onSuccess, onError: onError})
+        onSuccess(data)
+      }
+    }, token, noteInfo)
   }
 }
 
@@ -104,6 +118,9 @@ const mutations = {
       id: data.id,
       tag_content: data.tagContent
     })
+  },
+  'editNotePermission' (state, newPermission) {
+    state.curNote.note.permission = newPermission
   }
 }
 

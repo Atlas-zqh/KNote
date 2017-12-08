@@ -44,7 +44,7 @@ export default new Router({
       component: friendsPage
     },
     {
-      path: '/profile/noteview/:noteId',
+      path: '/profile/noteview/:userId/:noteId',
       name: 'noteview',
       component: noteView
     },

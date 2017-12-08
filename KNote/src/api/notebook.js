@@ -29,3 +29,15 @@ export function getNotebooks (callback, token, userId) {
     callback(error.response.data)
   })
 }
+
+export function addNotebook (callback, body) {
+  axios.post('notebooks/add', body, {
+    headers: {'Content-Type': 'application/json'}
+  })
+    .then(function (response) {
+      callback(response.data)
+    })
+    .catch(function (error) {
+      callback(error)
+    })
+}

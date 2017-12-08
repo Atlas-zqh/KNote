@@ -38,6 +38,8 @@ const actions = {
 
 const mutations = {
   'saveUserInfo' (state, userInfo) {
+    console.log('userInfo')
+    console.log(userInfo)
     state.info = userInfo
   },
   'saveFrequentTags' (state, tags) {

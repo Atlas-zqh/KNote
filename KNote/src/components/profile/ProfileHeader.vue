@@ -4,7 +4,7 @@
 
       <div class="username-wrapper">
         <a @click="jumpToUser">
-          {{this.userInfo[0].name}}
+          {{userInfo[0].name}}
         </a>
         <div v-show="user!=null&&user.id!=userId">
           <el-button v-if="!followed" type="primary" class="follow-button-wrapper" @click="follow">+ 关注</el-button>
@@ -20,7 +20,7 @@
         <el-col :span="4">
           <div class="grid-content">
             <a @click="jumpToNotebooks">
-              <span class="num-font-wrapper">{{this.userInfo[0].notebooks_count}}</span>
+              <span class="num-font-wrapper">{{userInfo[0].notebooks_count}}</span>
             </a>
             <span class="type-font-wrapper">笔记本</span>
           </div>
@@ -28,7 +28,7 @@
         <el-col :span="4">
           <div class="grid-content">
             <a @click="jumpToNotes">
-              <span class="num-font-wrapper">{{this.userInfo[0].notes_count}}</span>
+              <span class="num-font-wrapper">{{userInfo[0].notes_count}}</span>
             </a>
             <span class="type-font-wrapper">笔记</span>
           </div>
@@ -36,7 +36,7 @@
         <el-col :span="4">
           <div class="grid-content">
             <a @click="jumpToFans">
-              <span class="num-font-wrapper">{{this.userInfo[0].follow_count}}</span>
+              <span class="num-font-wrapper">{{userInfo[0].follow_count}}</span>
             </a>
             <span class="type-font-wrapper">关注</span>
           </div>
@@ -44,7 +44,7 @@
         <el-col :span="4">
           <div class="grid-content">
             <a @click="jumpToFans">
-              <span class="num-font-wrapper">{{this.userInfo[0].fans_count}}</span>
+              <span class="num-font-wrapper">{{userInfo[0].fans_count}}</span>
             </a>
             <span class="type-font-wrapper">粉丝</span>
           </div>
@@ -72,7 +72,8 @@
       }
     },
     created () {
-//      console.log(this.userId)
+      console.log('this.userId')
+      console.log(this.userId)
       this.fetchUserInfo(this.userId)
     },
     computed: {

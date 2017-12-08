@@ -110,8 +110,9 @@ class NotebookController extends BaseController
      */
     public function addNotebook(Request $request)
     {
-        $user_id = $request->user_id;
-        $notebook_name = $request->notebook_name;
+
+        $user_id = $request->userId;
+        $notebook_name = $request->notebookName;
         $permission = $request->permission;
 
         $notebook = new Notebook();
@@ -129,6 +130,7 @@ class NotebookController extends BaseController
         $user->save();
 
         return response()->json(['success' => '创建成功']);
+
     }
 
     public function getNotebooksAndNotes(Request $request)
@@ -160,11 +162,11 @@ class NotebookController extends BaseController
                 return response()->json(['error' => '您无权限进入其他用户的工作台'], 200);
             }
         } catch (TokenExpiredException $e) {
-            return response()->json(['token_expired'], $e->getStatusCode());
+            return response()->json(['error' => 'token_expired']);
         } catch (TokenInvalidException $e) {
-            return response()->json(['token_invalid'], $e->getStatusCode());
+            return response()->json(['error' => 'token_invalid']);
         } catch (JWTException $e) {
-            return response()->json(['token_absent'], $e->getStatusCode());
+            return response()->json(['error' => 'token_absent']);
         }
     }
 }
