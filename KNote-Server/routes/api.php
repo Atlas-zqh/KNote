@@ -27,11 +27,14 @@ $api->version('v1', function ($api) {
             $api->get('user/me', 'AuthController@getAuthenticatedUser');
 
             $api->post('note/modifyPermission', 'NoteController@modifyNotePermission');
+
+            $api->get('notebooks/getNotes', 'NotebookController@getNotesInNotebook');
         });
 
         $api->get('notebooks', 'NotebookController@getNotebooks');
         $api->post('notebooks/modify', 'NotebookController@modifyNotebooks');
         $api->post('notebooks/add', 'NotebookController@addNotebook');
+        $api->get('notebooks/delete', 'NotebookController@deleteNotebook');
 
 
         $api->get('note/tag', 'NoteController@getTagByNote');

@@ -1,27 +1,33 @@
 <template>
-  <el-col :span="6" style="padding-bottom: 20px">
-    <div>
-      <el-card style="height: 235px">
-        <div class="text item">
-          <div class="notebook-name-wrapper">
-            {{this.briefNotebook.notebook_name}}
+  <div @click="jumpToNotebookNotes(briefNotebook.id, briefNotebook.user_id)">
+
+    <el-col :span="6" style="padding-bottom: 20px">
+      <div>
+        <el-card style="height: 235px">
+          <div class="text item">
+            <div class="notebook-name-wrapper" style="cursor: pointer">
+              {{this.briefNotebook.notebook_name}}
+            </div>
+            <div class="notebook-info-wrapper">
+              共 {{this.briefNotebook.notes_count}} 篇笔记
+            </div>
+            <div class="notebook-info-wrapper">
+              最新修改于
+            </div>
+            <div class="notebook-info-wrapper">
+              {{this.briefNotebook.updated_at}}
+            </div>
           </div>
-          <div class="notebook-info-wrapper">
-            共 {{this.briefNotebook.notes_count}} 篇笔记
-          </div>
-          <div class="notebook-info-wrapper">
-            最新修改于
-          </div>
-          <div class="notebook-info-wrapper">
-            {{this.briefNotebook.updated_at}}
-          </div>
-        </div>
-      </el-card>
-    </div>
-  </el-col>
+        </el-card>
+      </div>
+    </el-col>
+  </div>
+
 </template>
 
 <script>
+  import router from '../../router'
+
   export default {
     name: 'briefNotebookCard',
     components: {},
@@ -29,7 +35,11 @@
     data () {
       return {}
     },
-    methods: {}
+    methods: {
+      jumpToNotebookNotes (notebookId, userId) {
+        router.push({name: 'notebookNote', params: {notebookId: notebookId, userId: userId}})
+      }
+    }
   }
 </script>
 

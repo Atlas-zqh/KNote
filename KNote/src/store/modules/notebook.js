@@ -3,7 +3,8 @@ import * as notebookApi from '../../api/notebook'
 const state = {
   allNotebooks: [],
   myNotebooks: [],
-  curUserNotebooks: []
+  curUserNotebooks: [],
+  curNoteBookNotes: null
 }
 
 const actions = {
@@ -37,10 +38,7 @@ const actions = {
           onError(data.error)
         }
       } else {
-        console.log('success')
-        console.log('aaaa ' + userId)
         commit('saveCurUserNotebooks', data)
-        console.log(data)
         if (onSuccess) {
           onSuccess(data)
         }
@@ -50,13 +48,60 @@ const actions = {
   addNewNotebook ({dispatch}, {newNotebookInfo, onSuccess, onError}) {
     notebookApi.addNotebook((data) => {
       if (data.error !== undefined) {
-        onError(data.error)
+        if (onError) {
+          onError(data.error)
+        }
       } else {
         console.log(newNotebookInfo)
         dispatch('fetchCurUserNotebooks', {userId: newNotebookInfo.userId})
-        onSuccess(data)
+        if (onSuccess) {
+          onSuccess(data)
+        }
       }
     }, newNotebookInfo)
+  },
+  fetchNotesInNotebook ({commit}, {notebookId, userId, onSuccess, onError}) {
+    let token = localStorage.getItem('token')
+    notebookApi.getNotesInNotebook((data) => {
+      if (data.error !== undefined) {
+        if (onError) {
+          onError(data.error)
+        }
+      } else {
+        commit('saveCurNotebookNotes', data)
+        if (onSuccess) {
+          onSuccess(data)
+        }
+      }
+    }, token, userId, notebookId)
+  },
+  editNotebookInfo ({dispatch}, {notebookInfo, onSuccess, onError}) {
+    notebookApi.modifyNotebook((data) => {
+      if (data.error !== undefined) {
+        if (onError) {
+          onError(data.error)
+        }
+      } else {
+        console.log('notebook.js 85')
+        console.log(notebookInfo)
+        dispatch('fetchNotesInNotebook', {notebookId: notebookInfo.notebookId, userId: notebookInfo.userId})
+        if (onSuccess) {
+          onSuccess(data)
+        }
+      }
+    }, notebookInfo)
+  },
+  deleteCurNotebook ({dispatch}, {userId, notebookId, onSuccess, onError}) {
+    notebookApi.deleteNotebook((data) => {
+      if (data.error !== undefined) {
+        if (onError) {
+          onError(data.error)
+        }
+      } else {
+        dispatch('fetchCurUserNotebooks', {userId: userId})
+        onSuccess(data)
+      }
+    }, notebookId)
   }
 }
 
@@ -69,6 +114,9 @@ const mutations = {
   },
   'saveCurUserNotebooks' (state, curUserNotebooks) {
     state.curUserNotebooks = curUserNotebooks
+  },
+  'saveCurNotebookNotes' (state, curNotebookNotes) {
+    state.curNoteBookNotes = curNotebookNotes
   }
 }
 

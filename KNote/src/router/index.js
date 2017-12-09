@@ -8,6 +8,7 @@ import friendsPage from '@/pages/Friends.vue'
 import profileNotes from '@/pages/ProfileNotes.vue'
 import noteView from '@/pages/NoteView.vue'
 import profileEdit from '@/pages/ProfileEdit.vue'
+import notebookNote from '@/pages/NotebookNote.vue'
 
 Vue.use(Router)
 
@@ -52,6 +53,11 @@ export default new Router({
       path: '/profile/edit/',
       name: 'profileEdit',
       component: profileEdit
+    },
+    {
+      path: '/profile/notebook/:userId/:notebookId',
+      name: 'notebookNote',
+      component: notebookNote
     }
   ]
 })

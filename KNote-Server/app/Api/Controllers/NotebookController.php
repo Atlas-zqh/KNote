@@ -65,11 +65,14 @@ class NotebookController extends BaseController
      */
     public function deleteNotebook(Request $request)
     {
-        $notebook_id = $request->notebook_id;
+        $notebook_id = $request->notebookId;
 
         $notebook = Notebook::find($notebook_id);
         $notebook->is_valid = false;
         $notebook->save();
+
+        // 将笔记本中的笔记也删除
+        DB::table('notes')->where('notebook_id', $notebook_id)->update(['is_valid' => false]);
 
         // 用户笔记本的数量-1
         $user = User::find($notebook->user_id);
@@ -88,8 +91,8 @@ class NotebookController extends BaseController
      */
     public function modifyNotebooks(Request $request)
     {
-        $notebook_id = $request->notebook_id;
-        $notebook_name = $request->notebook_name;
+        $notebook_id = $request->notebookId;
+        $notebook_name = $request->notebookName;
         $permission = $request->permission;
 
         $notebook = Notebook::find($notebook_id);
@@ -169,4 +172,51 @@ class NotebookController extends BaseController
             return response()->json(['error' => 'token_absent']);
         }
     }
+
+    public function getNotesInNotebook(Request $request)
+    {
+        $userId = $request->userId;
+        $notebookId = $request->notebookId;
+
+        try {
+            if (!$user = JWTAuth::parseToken()->authenticate()) {
+                return response()->json(['error' => 'user_not_found'], 200);
+            }
+
+            $notebook = DB::table('notebooks')->where('id', $notebookId)->first();
+            if (strcmp($user->id, $userId) == 0) {
+                $notes = DB::table('notes')->where([
+                    ['notebook_id', $notebookId],
+                    ['is_valid', true]
+                ])->orderBy('updated_at', 'desc')->get();
+                return response()->json(['userId' => $notebook->user_id,
+                    'notebookId' => $notebook->id,
+                    'permission' => $notebook->permission,
+                    'notebookName' => $notebook->notebook_name,
+                    'notesCount' => $notebook->notes_count,
+                    'createdAt' => $notebook->created_at,
+                    'notes' => $notes]);
+            } else {
+                $notes = DB::table('notes')->where([
+                    ['notebook_id', $notebookId],
+                    ['is_valid', true],
+                    ['permission', 'public']
+                ])->orderBy('updated_at', 'desc')->get();
+                return response()->json(['userId' => $notebook->user_id,
+                    'notebookId' => $notebook->id,
+                    'permission' => $notebook->permission,
+                    'notebookName' => $notebook->notebook_name,
+                    'notesCount' => $notebook->notes_count,
+                    'createdAt' => $notebook->created_at,
+                    'notes' => $notes]);
+            }
+        } catch (TokenExpiredException $e) {
+            return response()->json(['error' => 'token_expired'], 200);
+        } catch (TokenInvalidException $e) {
+            return response()->json(['error' => 'token_invalid'], 200);
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'token_absent'], 200);
+        }
+    }
+
 }

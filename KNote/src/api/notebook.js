@@ -41,3 +41,42 @@ export function addNotebook (callback, body) {
       callback(error)
     })
 }
+
+export function getNotesInNotebook (callback, token, userId, notebookId) {
+  axios.get('notebooks/getNotes', {
+    params: {
+      token: token,
+      userId: userId,
+      notebookId: notebookId
+    }
+  }).then(function (response) {
+    callback(response.data)
+  }).catch(function (error) {
+    callback(error)
+  })
+}
+
+export function modifyNotebook (callback, body) {
+  axios.post('notebooks/modify', body, {
+    headers: {'Content-Type': 'application/json'}
+  })
+    .then(function (response) {
+      callback(response.data)
+    })
+    .catch(function (error) {
+      callback(error)
+    })
+}
+
+export function deleteNotebook (callback, notebookId) {
+  axios.get('notebooks/delete', {
+    params: {
+      notebookId: notebookId
+    }
+  })
+    .then(function (response) {
+      callback(response.data)
+    }).catch(function (error) {
+    callback(error)
+  })
+}

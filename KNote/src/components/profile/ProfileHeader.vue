@@ -161,6 +161,7 @@
     font-size: 150%;
     font-weight: 100;
     color: black;
+    cursor: pointer;
   }
 
   .type-font-wrapper {
@@ -176,6 +177,7 @@
     font-family: "Hiragino Sans GB";
     font-size: xx-large;
     /*color: black;*/
+    cursor: pointer;
   }
 
   .follow-button-wrapper {

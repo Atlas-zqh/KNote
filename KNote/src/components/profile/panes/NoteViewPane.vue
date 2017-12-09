@@ -24,7 +24,6 @@
             <i class="el-icon-ali-write" @click="jumpToWorkbench"></i>
           </el-button>
 
-
           <el-popover
             ref="unlockPopover"
             placement="top"

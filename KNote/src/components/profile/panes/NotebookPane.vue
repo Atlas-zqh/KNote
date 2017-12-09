@@ -12,7 +12,8 @@
       <el-row class="notebook-row-wrapper" :gutter="50">
         <brief-notebook-card v-for="notebook in notebooks" :briefNotebook="notebook"></brief-notebook-card>
       </el-row>
-      <div v-show="notebooks.length==0" class="text item">暂无笔记本</div>
+      <div v-show=" notebooks.length==0" class="text item">暂无笔记本
+      </div>
     </div>
 
     <new-notebook-dialog :dialogVisible="this.newNotebookDialogVisible"
@@ -62,9 +63,6 @@
       ...mapActions('notebook', [
         'fetchCurUserNotebooks', 'addNewNotebook'
       ]),
-      handleClick () {
-        router.push('/profile/notes')
-      },
       jumpToCreateNotebook () {
         this.newNotebookDialogVisible = true
       },
