@@ -5,7 +5,8 @@ const state = {
   frequentTags: [],
   hotNotes: [],
   followers: [],
-  following: []
+  following: [],
+  isFollowingThisUser: false
 }
 
 const actions = {
@@ -33,6 +34,55 @@ const actions = {
     userApi.getFollowing((data) => {
       commit('saveFollowing', data)
     }, userId)
+  },
+  followCurUser ({dispatch}, {userId, followedUserId, onError, onSuccess}) {
+    userApi.followUser((data) => {
+      if (data.error !== undefined) {
+        if (onError) {
+          onError(data.error)
+        }
+      } else {
+        console.log('followCurUser userId ', userId)
+        dispatch('fetchUserInfo', followedUserId)
+        dispatch('isFollowingCurUser', {
+          userId: userId,
+          followedUserId: followedUserId,
+          onSuccess: onSuccess,
+          onError: onError
+        })
+        onSuccess(data)
+      }
+    }, userId, followedUserId)
+  },
+  unfollowCurUser ({dispatch}, {userId, followedUserId, onSuccess, onError}) {
+    userApi.unFollowUser((data) => {
+      if (data.error !== undefined) {
+        if (onError) {
+          onError(data.error)
+        }
+      } else {
+        dispatch('fetchUserInfo', followedUserId)
+        dispatch('isFollowingCurUser', {
+          userId: userId,
+          followedUserId: followedUserId,
+          onSuccess: onSuccess,
+          onError: onError
+        })
+        onSuccess(data)
+      }
+    }, userId, followedUserId)
+  },
+  isFollowingCurUser ({commit}, {userId, followedUserId, onSuccess, onError}) {
+    userApi.isFollowingUser((data) => {
+      if (data.error !== undefined) {
+        if (onError) {
+          onError(data.error)
+        }
+      } else {
+        commit('saveIsFollowingThisUser', data.isFollowing)
+        onSuccess(data)
+      }
+    }, userId, followedUserId)
   }
 }
 
@@ -53,6 +103,9 @@ const mutations = {
   },
   'saveFollowing' (state, following) {
     state.following = following
+  },
+  'saveIsFollowingThisUser' (state, isFollowingThisUser) {
+    state.isFollowingThisUser = isFollowingThisUser
   }
 }
 

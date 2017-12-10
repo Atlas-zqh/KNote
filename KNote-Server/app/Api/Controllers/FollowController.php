@@ -11,7 +11,7 @@ namespace App\Api\Controllers;
 
 use App\Follow;
 use App\User;
-use Dingo\Api\Contract\Http\Request;
+use Dingo\Api\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class FollowController extends BaseController
@@ -29,7 +29,7 @@ class FollowController extends BaseController
 
         $isFollowed = $this->isFollowed($userId, $followed_user);
         if ($isFollowed) {
-            return response()->json(['failure' => '已经关注！']);
+            return response()->json(['error' => '已经关注！']);
         }
 
         // 如果没找到，会自动返回404
@@ -42,7 +42,7 @@ class FollowController extends BaseController
 
         // 用户粉丝数和关注数变化
         $user = User::find($userId);
-        $user->follow_cnt += 1;
+        $user->follow_count += 1;
         $user->save();
 
         $f_user = User::find($followed_user);
@@ -65,7 +65,7 @@ class FollowController extends BaseController
 
         $isFollowed = $this->isFollowed($userId, $followed_user);
         if (!$isFollowed) {
-            return response()->json(['failure' => '尚未关注！']);
+            return response()->json(['error' => '尚未关注！']);
         }
 
         // 如果没找到，会自动返回404
@@ -78,7 +78,7 @@ class FollowController extends BaseController
 
         // 用户粉丝数和关注数变化
         $user = User::find($userId);
-        $user->follow_cnt -= 1;
+        $user->follow_count -= 1;
         $user->save();
 
         $f_user = User::find($followed_user);

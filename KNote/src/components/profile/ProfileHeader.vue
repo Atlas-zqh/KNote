@@ -7,8 +7,9 @@
           {{userInfo[0].name}}
         </a>
         <div v-show="user!=null&&user.id!=userId">
-          <el-button v-if="!followed" type="primary" class="follow-button-wrapper" @click="follow">+ 关注</el-button>
-          <el-button v-else class="follow-button-wrapper" @click="unfollow">取消关注</el-button>
+          <el-button v-show="!followingCurUser" type="primary" class="follow-button-wrapper" @click="follow">+ 关注
+          </el-button>
+          <el-button v-show="followingCurUser" class="follow-button-wrapper" @click="unfollow">取消关注</el-button>
         </div>
       </div>
 
@@ -68,17 +69,21 @@
     data () {
       return {
         userId: this.curUserId,
-        followed: false
       }
     },
     created () {
-      console.log('this.userId')
-      console.log(this.userId)
       this.fetchUserInfo(this.userId)
+      this.isFollowingCurUser({
+        userId: this.user.id,
+        followedUserId: this.userId,
+        onSuccess: () => {},
+        onError: () => {}
+      })
     },
     computed: {
       ...mapState('user', {
-        userInfo: state => state.info
+        userInfo: state => state.info,
+        followingCurUser: state => state.isFollowingThisUser
       }),
       ...mapState('auth', {
         user: state => state.user
@@ -86,13 +91,24 @@
     },
     components: {ElButton},
     methods: {
+      ...mapActions('user', [
+        'fetchUserInfo', 'followCurUser', 'unfollowCurUser', 'isFollowingCurUser'
+      ]),
       follow () {
-        this.followed = true
-        this.followers += 1
+        this.followCurUser({
+          userId: this.user.id,
+          followedUserId: this.userId,
+          onSuccess: () => {},
+          onError: () => {}
+        })
       },
       unfollow () {
-        this.followed = false
-        this.followers -= 1
+        this.unfollowCurUser({
+          userId: this.user.id,
+          followedUserId: this.userId,
+          onSuccess: () => {},
+          onError: () => {}
+        })
       },
       jumpToUser () {
         router.push({name: 'userProfile', params: {userId: this.userId}})
@@ -107,10 +123,7 @@
       },
       jumpToFans () {
         router.push({name: 'friends', params: {userId: this.userId}})
-      },
-      ...mapActions('user', [
-        'fetchUserInfo'
-      ])
+      }
     }
   }
 </script>

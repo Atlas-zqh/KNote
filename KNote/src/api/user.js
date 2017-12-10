@@ -61,3 +61,42 @@ export function getFollowing (callback, userId) {
     console.log(error)
   })
 }
+
+export function followUser (callback, userId, followedUserId) {
+  axios.get('user/follow', {
+    params: {
+      follow_user_id: userId,
+      followed_user_id: followedUserId
+    }
+  }).then((response) => {
+    callback(response.data)
+  }).catch(function (error) {
+    callback(error)
+  })
+}
+
+export function unFollowUser (callback, userId, followedUserId) {
+  axios.get('user/unFollow', {
+    params: {
+      follow_user_id: userId,
+      followed_user_id: followedUserId
+    }
+  }).then((response) => {
+    callback(response.data)
+  }).catch(function (error) {
+    callback(error)
+  })
+}
+
+export function isFollowingUser (callback, userId, followedUserId) {
+  axios.get('user/isFollowing', {
+    params: {
+      follow_user_id: userId,
+      followed_user_id: followedUserId
+    }
+  }).then((response) => {
+    callback(response.data)
+  }).catch(function (error) {
+    callback(error)
+  })
+}
