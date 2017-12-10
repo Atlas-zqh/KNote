@@ -1,20 +1,13 @@
 <template>
   <div>
-    <el-menu default-active=1   class="el-menu-demo" mode="horizontal">
+    <el-menu default-active=1       class="el-menu-demo" mode="horizontal">
       <div class="nav-wrapper">
         <div class="logo-wrapper" @click="jumpToIndex">
           <img src="../../assets/logo_with_word.png" width="100px"/>
         </div>
         <div class="search-bar-wrapper">
-          <el-input placeholder="搜索内容" v-model="search_input">
-            <el-select v-model="select" slot="prepend" placeholder="搜索范围">
-              <el-option label="全部笔记" value="1"></el-option>
-              <el-option label="当前笔记" value="2"></el-option>
-              <el-option label="笔记本" value="3"></el-option>
-              <el-option label="标签" value="4"></el-option>
-            </el-select>
-            <el-button slot="append" icon="search"></el-button>
-          </el-input>
+          <el-input placeholder="输入搜索内容" icon="search" v-model="search_input"
+                    :on-icon-click="showSearchResult"></el-input>
         </div>
         <el-menu-item v-if="user==null" index="3" @click="sign_in">登录</el-menu-item>
         <el-submenu v-else index="4">
@@ -29,7 +22,6 @@
           <el-menu-item index="2-2" @click="showChooseNotebook">创建新笔记</el-menu-item>
           <el-menu-item index="2-3" @click="jumpToMyNotes">我的笔记</el-menu-item>
           <el-menu-item index="2-4" @click="jumpToMyNotebooks">我的笔记本</el-menu-item>
-          <!--<el-menu-item index="2-5">我的标签</el-menu-item>-->
         </el-submenu>
         <el-menu-item index="1" @click="jumpToIndex">首页</el-menu-item>
       </div>
@@ -101,7 +93,6 @@
     data () {
       return {
         search_input: '',
-        select: '',
         show_chooseNoteBook: false,
         value: [],
         list: [],
@@ -112,11 +103,6 @@
       this.refreshUser({
         onSuccess: () => {}
       })
-    },
-    mounted () {
-//      console.log('menuBar mounted')
-//      console.log(this.user)
-
     },
     methods: {
       ...mapActions('auth', [
@@ -130,6 +116,9 @@
       ]),
       ...mapActions('note', [
         'createNote'
+      ]),
+      ...mapActions('search', [
+        'fetchSearchResult'
       ]),
       sign_in () {
         this.$modal.show('sign-in')
@@ -196,7 +185,7 @@
             userId: this.user.id,
             notebookId: this.value[0],
             noteTitle: this.title.title,
-            noteContent: "",
+            noteContent: '',
             permission: 'public'
           },
           onSuccess: () => {
@@ -205,6 +194,18 @@
           },
           onError: () => {
             this.$message.error('创建失败')
+          }
+        })
+      },
+      showSearchResult () {
+        this.fetchSearchResult({
+          userId: this.user.id,
+          keyword: this.search_input,
+          onSuccess: () => {
+            router.push({name: 'searchResultPage'})
+          },
+          onError: () => {
+            this.$message.error('出错了！请稍后重试！')
           }
         })
       }
@@ -244,7 +245,7 @@
   .search-bar-wrapper {
     display: inline-block;
     padding-top: 12px;
-    padding-left: 248px;
+    padding-left: 340px;
   }
 
   .el-input-group__append div.el-select .el-input__inner, /deep/

@@ -9,6 +9,7 @@ import profileNotes from '@/pages/ProfileNotes.vue'
 import noteView from '@/pages/NoteView.vue'
 import profileEdit from '@/pages/ProfileEdit.vue'
 import notebookNote from '@/pages/NotebookNote.vue'
+import searchResultPage from '@/pages/SearchResultPage'
 
 Vue.use(Router)
 
@@ -58,6 +59,11 @@ export default new Router({
       path: '/profile/notebook/:userId/:notebookId',
       name: 'notebookNote',
       component: notebookNote
+    },
+    {
+      path: '/search',
+      name: 'searchResultPage',
+      component: searchResultPage
     }
   ]
 })

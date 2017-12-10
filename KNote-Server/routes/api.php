@@ -36,7 +36,6 @@ $api->version('v1', function ($api) {
         $api->post('notebooks/add', 'NotebookController@addNotebook');
         $api->get('notebooks/delete', 'NotebookController@deleteNotebook');
 
-
         $api->get('note/tag', 'NoteController@getTagByNote');
         $api->get('note/getNotes', 'NoteController@getAllValidNotesByUser');
         $api->get('note/detail', 'NoteController@getNoteDetail');
@@ -46,19 +45,14 @@ $api->version('v1', function ($api) {
         $api->get('note/like', 'NoteController@likeNote');
         $api->get('note/unlike', 'NoteController@cancelLike');
         $api->get('note/isLikingNote', 'NoteController@isLikingNote');
-
-
         $api->get('note/deleteTagRelation', 'NoteController@deleteTag');
         $api->get('note/addTagRelation', 'NoteController@addTag');
-
 
         $api->get('workbench', 'NotebookController@getNotebooksAndNotes');
 
         $api->post('user/modifyInfo', 'AuthController@modifyUserInfo');
         $api->post('user/modifyPassword', 'AuthController@modifyPassword');
         $api->get('user/frequentTags', 'UserController@getFrequentTags');
-
-
         $api->get('user/hotNotes', 'UserController@getHotNotes');
         $api->get('user/userInfo', 'UserController@getUserInfo');
         $api->get('user/follow', 'FollowController@follow');
@@ -67,5 +61,6 @@ $api->version('v1', function ($api) {
         $api->get('user/followers', 'UserController@getFollowers');
         $api->get('user/following', 'UserController@getFollowing');
 
+        $api->get('search/result', 'SearchController@getSearchResult');
     });
 });
