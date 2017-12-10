@@ -41,6 +41,8 @@ $api->version('v1', function ($api) {
         $api->get('note/getNotes', 'NoteController@getAllValidNotesByUser');
         $api->get('note/detail', 'NoteController@getNoteDetail');
         $api->get('note/delete', 'NoteController@deleteNote');
+        $api->post('note/modify', 'NoteController@modifyNoteContent');
+        $api->post('note/add', 'NoteController@addNote');
 
 
         $api->get('note/deleteTagRelation', 'NoteController@deleteTag');

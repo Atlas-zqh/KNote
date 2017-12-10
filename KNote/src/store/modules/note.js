@@ -96,6 +96,33 @@ const actions = {
         onSuccess(data)
       }
     }, token, noteInfo)
+  },
+  editNoteContent ({dispatch}, {noteContent, onSuccess, onError}) {
+    noteApi.modifyNoteContent((data) => {
+      if (data.error !== undefined) {
+        if (onError) {
+          onError(data)
+        }
+      } else {
+        dispatch('refreshWorkbenchNoteDetail', {noteId: noteContent.noteId, onSuccess: onSuccess, onError: onError})
+        onSuccess(data)
+      }
+    }, noteContent)
+  },
+  createNote ({dispatch}, {noteInfo, onSuccess, onError}) {
+    noteApi.addNote((data) => {
+      if (data.error !== undefined) {
+        if (onError) {
+          onError(data)
+        }
+      } else {
+        console.log('createNote note.js')
+        console.log(data)
+        console.log(data.noteId)
+        dispatch('refreshWorkbenchNoteDetail', {noteId: data.noteId, onSuccess: onSuccess, onError: onError})
+        onSuccess(data)
+      }
+    }, noteInfo)
   }
 }
 

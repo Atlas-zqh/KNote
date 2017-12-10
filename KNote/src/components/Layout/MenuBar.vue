@@ -1,7 +1,6 @@
 <template>
   <div>
-    <el-menu default-active=1     class="el-menu-demo" mode="horizontal"
-             @select="handleSelect">
+    <el-menu default-active=1   class="el-menu-demo" mode="horizontal">
       <div class="nav-wrapper">
         <div class="logo-wrapper" @click="jumpToIndex">
           <img src="../../assets/logo_with_word.png" width="100px"/>
@@ -41,10 +40,9 @@
       <el-dialog class="dialog" title="选择笔记本" :visible.sync="show_chooseNoteBook" width="30%">
         <div>
           <template>
-            <el-select class="select" v-model="value" filterable remote placeholder="请选择" :remote-method="remoteMethod"
-                       :loading="loading">
+            <el-select class="select" v-model="value" filterable placeholder="请选择">
               <el-option
-                v-for="item in options"
+                v-for="item in this.list"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -55,7 +53,7 @@
         </div>
 
         <div slot="footer" style="text-align: center;">
-          <el-button type="primary" @click="show_chooseNoteBook = false">确 定</el-button>
+          <el-button type="primary" @click="createNewNote">确 定</el-button>
           <el-button @click="show_chooseNoteBook = false">取 消</el-button>
         </div>
       </el-dialog>
@@ -92,14 +90,20 @@
       }),
       ...mapState('notebook', {
         myNotebooks: state => state.myNotebooks
-      })
+      }),
+      title: function () {
+        let date = new Date()
+        let time = date.getFullYear() + '年' + (date.getMonth() + 1) + '月' + date.getDate() + '日' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds()
+        return {
+          title: time + '的笔记'
+        }
+      }
     },
     data () {
       return {
         search_input: '',
         select: '',
         show_chooseNoteBook: false,
-        options: [],
         value: [],
         list: [],
         loading: false
@@ -111,72 +115,70 @@
       })
     },
     mounted () {
-      this.fetchMyNotebooks({
-        userId: this.user.id,
-        onSuccess: () => {},
-        onError: (msg) => this.$message.error(msg)
-      })
-      this.list = this.myNotebooks.map(item => {
-        return {value: item.id, label: item.notebook_name}
-      })
+//      console.log('menuBar mounted')
+//      console.log(this.user)
+
     },
     methods: {
-      handleSelect (key, keyPath) {
-        console.log(key, keyPath)
-      },
+      ...mapActions('auth', [
+        'refreshUser', 'signOut'
+      ]),
+      ...mapActions('notebook', [
+        'fetchMyNotebooks'
+      ]),
+      ...mapActions('user', [
+        'fetchUserInfo'
+      ]),
+      ...mapActions('note', [
+        'createNote'
+      ]),
       sign_in () {
         this.$modal.show('sign-in')
       },
       showChooseNotebook () {
-        if (this.user == null) {
+        if (this.user === null) {
           this.$modal.show('sign-in')
         } else {
           this.show_chooseNoteBook = true
+          this.fetchMyNotebooks({
+            userId: this.user.id,
+            onSuccess: () => {},
+            onError: (msg) => this.$message.error(msg)
+          })
+          this.list = this.myNotebooks.map(item => {
+            return {value: item.id, label: item.notebook_name}
+          })
+
+          console.log(this.list)
         }
       },
       jumpToIndex () {
         router.push('/')
       },
       jumpToMyNotebooks () {
-        if (this.user == null) {
+        if (this.user === null) {
           this.$modal.show('sign-in')
         } else {
           router.push({name: 'notebooks', params: {userId: this.user.id}})
         }
       },
       jumpToWorkbench () {
-        if (this.user == null) {
+        if (this.user === null) {
           this.$modal.show('sign-in')
         } else {
           router.push({name: 'workbench', params: {userId: this.user.id}})
         }
       },
       jumpToMyNotes () {
-        if (this.user == null) {
+        if (this.user === null) {
           this.$modal.show('sign-in')
         } else {
           router.push({name: 'notes', params: {userId: this.user.id}})
         }
       },
       jumpToMyPage () {
-        console.log('bbb' + this.user.id)
         this.fetchUserInfo(this.user.id)
         router.push({name: 'userProfile', params: {userId: this.user.id}})
-      },
-      remoteMethod (query) {
-        console.log(this.list)
-        if (query !== '') {
-          this.loading = true
-          setTimeout(() => {
-            this.loading = false
-            this.options = this.list.filter(item => {
-              return item.label.toLowerCase()
-                .indexOf(query.toLowerCase()) > -1
-            })
-          }, 200)
-        } else {
-          this.options = []
-        }
       },
       goSignOut () {
         this.signOut({
@@ -189,15 +191,24 @@
           }
         })
       },
-      ...mapActions('auth', [
-        'refreshUser', 'signOut'
-      ]),
-      ...mapActions('notebook', [
-        'fetchMyNotebooks'
-      ]),
-      ...mapActions('user', [
-        'fetchUserInfo'
-      ])
+      createNewNote () {
+        this.createNote({
+          noteInfo: {
+            userId: this.user.id,
+            notebookId: this.value[0],
+            noteTitle: this.title.title,
+            noteContent: '',
+            permission: 'public'
+          },
+          onSuccess: () => {
+            this.show_chooseNoteBook = false
+            router.push({name: 'workbench', params: {userId: this.user.id}})
+          },
+          onError: () => {
+            this.$message.error('创建失败')
+          }
+        })
+      }
     }
   }
 </script>

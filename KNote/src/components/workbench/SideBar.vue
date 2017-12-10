@@ -1,7 +1,9 @@
 <template>
   <div class="menu-wrapper">
     <el-menu class="menu-vertical"
-             :collapse="isCollapse">
+             :collapse="isCollapse"
+             :default-openeds="selectedNotebook"
+    >
       <div class="notebook-indicator">
         <div v-if="!isCollapse">
           <span>我的笔记本</span>
@@ -66,9 +68,17 @@
     computed: {
       ...mapState('notebook', {
         notebookInfo: state => state.allNotebooks
-      })
+      }),
+      ...mapState('note', {
+        workbenchNote: state => state.workbenchNote
+      }),
+      selectedNotebook: function () {
+        let notebookId = this.workbenchNote === null ? '' : this.workbenchNote.notebook[0].id
+        return [notebookId]
+      }
     },
     created () {
+      console.log(this.workbenchNote)
       this.fetchNotebooksAndNotes({
         userId: this.userId,
         onSuccess: (data) => {},
@@ -89,6 +99,8 @@
         'fetchWorkbenchNoteDetail'
       ]),
       handleOpen () {
+        console.log(this.selectedNotebook)
+
         this.isCollapse = !this.isCollapse
         this.changeCollapse()
       },

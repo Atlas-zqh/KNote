@@ -22,8 +22,6 @@ export function getNotebooks (callback, token, userId) {
       userId: userId
     }
   }).then(function (response) {
-    console.log('getNotebooks')
-    console.log(response)
     callback(response.data)
   }).catch(function (error) {
     callback(error.response.data)

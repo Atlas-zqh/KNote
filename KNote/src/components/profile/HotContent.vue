@@ -2,7 +2,9 @@
   <div>
     <el-card class="box-card">
       <div v-if="hotNotes.length>0" v-for="note in this.hotNotes" :key="note.id" class="text item">
-        {{note.title}}
+        <div @click="jumpToNoteDetail(note.id)">
+          {{note.title}}
+        </div>
       </div>
       <div class="text item" v-show="hotNotes.length == 0">
         暂无热门笔记
@@ -13,6 +15,7 @@
 
 <script>
   import { mapState, mapActions } from 'vuex'
+  import router from '../../router'
 
   export default {
     name: 'hotContent',
@@ -32,7 +35,10 @@
     methods: {
       ...mapActions('user', [
         'fetchHotNotes'
-      ])
+      ]),
+      jumpToNoteDetail (noteId) {
+        router.push({name: 'noteview', params: {userId: this.userId, noteId: noteId}})
+      }
     }
   }
 </script>

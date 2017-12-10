@@ -8,7 +8,7 @@
         <div>
           <div style="float: left;padding-left: 2px">
             <el-breadcrumb separator="/">
-              <el-breadcrumb-item :to="{ path: '/profile/notes' }">{{curNote.notebook[0].notebook_name}}
+              <el-breadcrumb-item :to="{ name:'notebookNote', params: {userId: curNote.note.user_id, notebookId: curNote.note.notebook_id} }">{{curNote.notebook[0].notebook_name}}
               </el-breadcrumb-item>
               <el-breadcrumb-item>{{curNote.note.title}}</el-breadcrumb-item>
             </el-breadcrumb>

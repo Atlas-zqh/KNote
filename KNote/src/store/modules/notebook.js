@@ -9,11 +9,14 @@ const state = {
 
 const actions = {
   fetchNotebooksAndNotes ({commit}, {userId, onSuccess, onError}) {
+    console.log(userId)
     let token = localStorage.getItem('token')
     notebookApi.getNotebooksAndNotes((data) => {
       if (data.error !== undefined) {
+        console.log('errrorrrr!!!')
         onError(data.error)
       } else {
+        console.log('not error')
         commit('saveAllNoteBooks', data)
         onSuccess(data)
       }

@@ -28,7 +28,6 @@ export function getNoteDetail (callback, token, noteId) {
       console.log('response in api/note.js 30')
       console.log(response)
       callback(response.data)
-      console.log('aaaaaaaa')
     })
     .catch(function (error) {
       console.log('error in api/note.js 30')
@@ -86,6 +85,34 @@ export function modifyNotePermission (callback, token, noteInfo) {
     params: {
       token: token
     },
+    headers:
+      {
+        'Content-Type': 'application/json'
+      }
+  })
+    .then(function (response) {
+      callback(response.data)
+    }).catch(function (error) {
+    callback(error.response)
+  })
+}
+
+export function modifyNoteContent (callback, body) {
+  axios.post('note/modify', body, {
+    headers:
+      {
+        'Content-Type': 'application/json'
+      }
+  })
+    .then(function (response) {
+      callback(response.data)
+    }).catch(function (error) {
+    callback(error.response)
+  })
+}
+
+export function addNote (callback, body) {
+  axios.post('note/add', body, {
     headers:
       {
         'Content-Type': 'application/json'

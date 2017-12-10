@@ -7,12 +7,13 @@ const state = {
 
 // actions 异步
 const actions = {
-  signUp ({commit}, {body, onSuccess, onError}) {
+  signUp ({dispatch}, {body, onSuccess, onError}) {
     authApi.signUp(data => {
       if (data.error !== undefined) {
         onError(data.error)
       } else {
-        onSuccess(data.success)
+        dispatch('signIn', {body: body, onSuccess: onSuccess, onError: onError})
+        onSuccess(state.user.name)
       }
     }, body)
   },
@@ -22,7 +23,7 @@ const actions = {
         onError(data.error)
       } else {
         localStorage.setItem('token', data.token)
-        dispatch('fetchUser', {onSuccess})
+        dispatch('fetchUser', {onSuccess: onSuccess})
       }
     }, body)
   },

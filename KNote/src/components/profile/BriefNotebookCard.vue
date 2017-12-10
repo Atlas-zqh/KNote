@@ -5,7 +5,7 @@
       <div>
         <el-card style="height: 235px">
           <div class="text item">
-            <div class="notebook-name-wrapper" style="cursor: pointer">
+            <div class="notebook-name-wrapper">
               {{this.briefNotebook.notebook_name}}
             </div>
             <div class="notebook-info-wrapper">
@@ -60,6 +60,7 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    cursor: pointer
   }
 
   .notebook-info-wrapper {

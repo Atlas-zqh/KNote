@@ -74,13 +74,20 @@ class AuthController extends BaseController
      */
     public function register(Request $request)
     {
-        $registerInfo = $request->only('username', 'email', 'password');
+        $registerInfo = $request->only('name', 'email', 'password');
         $registerInfo["password"] = Hash::make($registerInfo["password"]);
-        if (User::where('name', $registerInfo["username"])) {
+        if (!(DB::table('users')->where('name',$registerInfo['name'])->get()->isEmpty())) {
             return response()->json(['error' => '用户名已被注册！']);
-        } else if (User::where('email', $registerInfo["email"])) {
+        } else if (!(DB::table('users')->where('email',$registerInfo['email'])->get()->isEmpty())) {
             return response()->json(['error' => '邮箱已被注册！']);
         } else {
+            $registerInfo["gender"] = '保密';
+            $registerInfo["permission"] = 'normal';
+            $registerInfo["notebooks_count"] = 0;
+            $registerInfo["notes_count"] = 0;
+            $registerInfo["follow_count"] = 0;
+            $registerInfo["fans_count"] = 0;
+            $registerInfo["is_valid"] = true;
             User::create($registerInfo);
 
             return response()->json(['success' => '注册成功！']);

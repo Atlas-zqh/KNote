@@ -26,13 +26,13 @@
 
     ['clean']
   ]
-
-  var quickNoteToolbar = [
-    ['bold', 'italic', 'underline', 'strike'],
-    ['blockquote', 'code-block', 'image'],
-    [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}],
-    [{'color': []}, {'background': []}, {'size': []}]
-  ]
+  //
+  //  var quickNoteToolbar = [
+  //    ['bold', 'italic', 'underline', 'strike'],
+  //    ['blockquote', 'code-block', 'image'],
+  //    [{'list': 'ordered'}, {'list': 'bullet'}, {'list': 'check'}],
+  //    [{'color': []}, {'background': []}, {'size': []}]
+  //  ]
 
   export default {
     name: 'vue-editor',
@@ -56,7 +56,7 @@
       return {
         quill: null,
         editor: null,
-        toolbar: this.quickMode ? quickNoteToolbar : defaultToolbar
+        toolbar: defaultToolbar
       }
     },
 

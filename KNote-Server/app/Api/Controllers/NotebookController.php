@@ -74,9 +74,11 @@ class NotebookController extends BaseController
         // 将笔记本中的笔记也删除
         DB::table('notes')->where('notebook_id', $notebook_id)->update(['is_valid' => false]);
 
+        // 用户的笔记数减
         // 用户笔记本的数量-1
         $user = User::find($notebook->user_id);
         $user->notebooks_count -= 1;
+        $user->notes_count -= $notebook->notes_count;
         $user->save();
 
         return response()->json(['success' => '删除成功']);
@@ -144,7 +146,7 @@ class NotebookController extends BaseController
             if (!$user = JWTAuth::parseToken()->authenticate()) {
                 return response()->json(['user_not_found'], 404);
             }
-            if (strcmp($user->id, $userId) == 0) {
+            if ((int)$user->id - (int)$userId == 0) {
                 $notebooks = DB::table('notebooks')->where([
                     ['user_id', $userId],
                     ['is_valid', true]

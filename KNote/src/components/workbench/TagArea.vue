@@ -1,5 +1,5 @@
 <template>
-  <div id="tag_area">
+  <div v-show="workbenchNote !== null" id="tag_area">
     <el-tag v-if="workbenchNote!==null"
             :type="tagType"
             v-for="tag in workbenchNote.tags"
@@ -22,11 +22,10 @@
     >
     </el-input>
     <el-button v-else class="button-new-tag" size="small" @click="showInput"
-               v-show="workbenchNote==null||workbenchNote.tags.length<=6">
+               v-show="workbenchNote===null||workbenchNote.tags===undefined||workbenchNote.tags.length<=6">
       + 新标签
     </el-button>
   </div>
-
 </template>
 
 <script>

@@ -168,7 +168,7 @@
     },
     methods: {
       ...mapActions('auth', [
-        'signIn'
+        'signIn', 'signUp'
       ]),
       submitLoginForm (formName) {
         this.$refs[formName].validate((valid) => {
@@ -195,7 +195,17 @@
       submitRegisterForm (formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('submit!')
+            this.signUp({
+              body: {
+                name: this.signUpForm.username,
+                password: this.signUpForm.pass,
+                email: this.signUpForm.email
+              },
+              onSuccess: (username) => {
+                this.confirmSignIn(username)
+              },
+              onError: (msg) => {this.$message.error(msg)}
+            })
           } else {
             console.log('error submit!!')
             return false
@@ -208,7 +218,6 @@
         this.$modal.hide('sign-in')
       },
       confirmSignIn (username) {
-        console.log(this.user)
         if (this.user !== null) {
           this.$modal.hide('sign-in')
           this.$message({

@@ -10,6 +10,7 @@ namespace App\Api\Controllers;
 
 
 use App\Note;
+use App\Notebook;
 use App\User;
 use Dingo\Api\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -65,7 +66,7 @@ class NoteController extends BaseController
                 return response()->json(['user_not_found'], 404);
             }
             $note = DB::table('notes')->where('id', $noteId)->first();
-            if (strcmp($note->user_id, $user->id) != 0 && $note->permission == 'private') {
+            if (strcmp($note->user_id, $user->id) !== 0 && $note->permission === 'private') {
                 return response()->json(['error' => '您无权限查看该笔记'], 200);
             } else {
                 $tags = DB::table('note_tag_relations')
@@ -168,15 +169,13 @@ class NoteController extends BaseController
      */
     public function modifyNoteContent(Request $request)
     {
-        $note_id = $request->note_id;
-        $title = $request->note_title;
-        $note_content = $request->note_content;
-        $permission = $request->permission;
+        $note_id = $request->noteId;
+        $title = $request->noteTitle;
+        $note_content = $request->noteContent;
 
         $note = Note::find($note_id);
         $note->title = $title;
         $note->content = $note_content;
-        $note->permission = $permission;
 
         $note->save();
 
@@ -260,17 +259,17 @@ class NoteController extends BaseController
      */
     public function addNote(Request $request)
     {
-        $user_id = $request->user_id;
-        $notebook_id = $request->notebook_id;
-        $title = $request->note_title;
-        $note_content = $request->note_content;
+        $user_id = $request->userId;
+        $notebook_id = $request->notebookId;
+        $title = $request->noteTitle;
+//        $note_content = $request->noteContent;
         $permission = $request->permission;
 
         $note = new Note();
         $note->user_id = $user_id;
         $note->notebook_id = $notebook_id;
         $note->title = $title;
-        $note->content = $note_content;
+        $note->content = '';
         $note->is_valid = true;
         $note->permission = $permission;
 
@@ -281,7 +280,12 @@ class NoteController extends BaseController
         $user->notes_count += 1;
         $user->save();
 
-        return response()->json(['success' => '创建成功']);
+        // 笔记本内的笔记数+1
+        $notebook = Notebook::find($notebook_id);
+        $notebook->notes_count += 1;
+        $notebook->save();
+
+        return response()->json(['success' => '创建成功', 'noteId' => $note->id]);
     }
 
     /**

@@ -1,12 +1,20 @@
 <template>
   <div>
-    <el-input placeholder="请输入标题..." :maxlength="30"  v-bind:value="value"
+    <el-input placeholder="请输入标题..." :maxlength="30" v-bind:value="value"
               @change="handleInput($event)"></el-input>
+    <!--<span>-->
+          <!--<el-button type="text" style="float: right">-->
+      <!--<i class="el-icon-ali-sync"></i>-->
+    <!--</el-button>-->
+    <!--</span>-->
   </div>
 </template>
 
 <script>
+//  import ElButton from '../../../node_modules/element-ui/packages/button/src/button.vue'
+
   export default {
+//    components: {ElButton},
     name: 'titleEditor',
     props: ['value'],
     methods: {
@@ -18,6 +26,8 @@
 </script>
 
 <style scoped>
+  @import "../../assets/icon/iconfont.css";
+
   .el-input /deep/ .el-input__inner {
     border: none;
     height: 60px;
