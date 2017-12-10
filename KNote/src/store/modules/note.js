@@ -3,7 +3,8 @@ import * as noteApi from '../../api/note'
 const state = {
   latestNotes: [],
   curNote: null,
-  workbenchNote: null
+  workbenchNote: null,
+  isLikingNote: false
 }
 
 const actions = {
@@ -123,6 +124,47 @@ const actions = {
         onSuccess(data)
       }
     }, noteInfo)
+  },
+  likeCurNote ({dispatch}, {noteId, userId, onSuccess, onError}) {
+    noteApi.likeNote((data) => {
+      if (data.error !== undefined) {
+        if (onError) {
+          onError(data)
+        }
+      } else {
+        dispatch('refreshNoteDetail', {noteId: noteId, onSuccess: onSuccess, onError: onError})
+        dispatch('isLikingCurNote', {noteId: noteId, userId: userId, onSuccess: onSuccess, onError: onError})
+        onSuccess(data)
+      }
+    }, noteId, userId)
+  },
+  unlikeCurNote ({dispatch}, {noteId, userId, onSuccess, onError}) {
+    noteApi.unlikeNote((data) => {
+      if (data.error !== undefined) {
+        if (onError) {
+          onError(data)
+        }
+      } else {
+        console.log('note.js unlikeCurNote')
+        console.log(data)
+        dispatch('refreshNoteDetail', {noteId: noteId, onSuccess: onSuccess, onError: onError})
+        dispatch('isLikingCurNote', {noteId: noteId, userId: userId, onSuccess: onSuccess, onError: onError})
+        onSuccess(data)
+      }
+    }, noteId, userId)
+  },
+  isLikingCurNote ({commit}, {noteId, userId, onSuccess, onError}) {
+    noteApi.isLikingNote((data) => {
+      if (data.error !== undefined) {
+        if (onError) {
+          onError(data)
+        }
+      } else {
+        console.log(data)
+        commit('saveLikingNote', data.isLiking)
+        onSuccess(data)
+      }
+    }, noteId, userId)
   }
 }
 
@@ -148,6 +190,9 @@ const mutations = {
   },
   'editNotePermission' (state, newPermission) {
     state.curNote.note.permission = newPermission
+  },
+  'saveLikingNote' (state, isLiking) {
+    state.isLikingNote = isLiking
   }
 }
 

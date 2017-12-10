@@ -43,6 +43,9 @@ $api->version('v1', function ($api) {
         $api->get('note/delete', 'NoteController@deleteNote');
         $api->post('note/modify', 'NoteController@modifyNoteContent');
         $api->post('note/add', 'NoteController@addNote');
+        $api->get('note/like', 'NoteController@likeNote');
+        $api->get('note/unlike', 'NoteController@cancelLike');
+        $api->get('note/isLikingNote', 'NoteController@isLikingNote');
 
 
         $api->get('note/deleteTagRelation', 'NoteController@deleteTag');

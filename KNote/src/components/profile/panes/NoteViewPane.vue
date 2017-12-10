@@ -8,21 +8,59 @@
         <div>
           <div style="float: left;padding-left: 2px">
             <el-breadcrumb separator="/">
-              <el-breadcrumb-item :to="{ name:'notebookNote', params: {userId: curNote.note.user_id, notebookId: curNote.note.notebook_id} }">{{curNote.notebook[0].notebook_name}}
+              <el-breadcrumb-item
+                :to="{ name:'notebookNote', params: {userId: curNote.note.user_id, notebookId: curNote.note.notebook_id} }">
+                {{curNote.notebook[0].notebook_name}}
               </el-breadcrumb-item>
               <el-breadcrumb-item>{{curNote.note.title}}</el-breadcrumb-item>
             </el-breadcrumb>
           </div>
 
-          <el-button type="text" class="operation-wrapper">
-            <i class="el-icon-ali-download" @click="downloadAsPDF"></i>
-          </el-button>
-          <el-button type="text" class="operation-wrapper">
-            <i class="el-icon-ali-delete" @click="deleteCurNote"></i>
-          </el-button>
-          <el-button type="text" class="operation-wrapper">
-            <i class="el-icon-ali-write" @click="jumpToWorkbench"></i>
-          </el-button>
+
+          <el-popover
+            ref="popover1"
+            placement="top-start"
+            width="150"
+            trigger="hover"
+            content="收藏到我的笔记本">
+            <el-button slot="reference" type="text" class="operation-wrapper">
+              <i class="el-icon-ali-fav" @click="saveToMyNotebook"></i>
+            </el-button>
+          </el-popover>
+
+
+          <el-popover
+            ref="popover2"
+            placement="top-start"
+            width="150"
+            trigger="hover"
+            content="下载为pdf">
+            <el-button slot="reference" type="text" class="operation-wrapper">
+              <i class="el-icon-ali-download" @click="downloadAsPDF"></i>
+            </el-button>
+          </el-popover>
+
+          <el-popover
+            ref="popover3"
+            placement="top-start"
+            width="150"
+            trigger="hover"
+            content="删除该笔记">
+            <el-button slot="reference" type="text" class="operation-wrapper">
+              <i class="el-icon-ali-delete" @click="deleteCurNote"></i>
+            </el-button>
+          </el-popover>
+
+          <el-popover
+            ref="popover4"
+            placement="top-start"
+            width="150"
+            trigger="hover"
+            content="编辑">
+            <el-button slot="reference" type="text" class="operation-wrapper">
+              <i class="el-icon-ali-write" @click="jumpToWorkbench"></i>
+            </el-button>
+          </el-popover>
 
           <el-popover
             ref="unlockPopover"
@@ -55,24 +93,25 @@
               <i class="el-icon-ali-lock"></i>
             </el-button>
           </el-popover>
-
-
         </div>
-
       </div>
 
       <div id="note_content">
         <div class="note-content-wrapper" v-html="formatContent"></div>
         <div class="note-info-wrapper">
           <div style="float: right;">
-            <el-button v-if="!liked" size="large" @click="handleLike" class="like-button-wrapper">
-              <i class="el-icon-ali-xihuan-xianxing"></i>
-              {{curNote.like_count}}
-            </el-button>
-            <el-button v-else size="large" @click="cancelLike" class="like-button-wrapper">
-              <i class="el-icon-ali-xihuan"></i>
-              {{curNote.like_count}}
-            </el-button>
+            <div v-show="!isLikedNote">
+              <el-button size="large" @click="handleLike" class="like-button-wrapper">
+                <i class="el-icon-ali-xihuan-xianxing"></i>
+                {{curNote.like_count}}
+              </el-button>
+            </div>
+            <div v-show="isLikedNote">
+              <el-button size="large" @click="cancelLike" class="like-button-wrapper">
+                <i class="el-icon-ali-xihuan"></i>
+                {{curNote.like_count}}
+              </el-button>
+            </div>
           </div>
           <div>创建于: {{curNote.note.created_at}}</div>
           <div>更新于: {{curNote.note.updated_at}}</div>
@@ -87,12 +126,32 @@
             </el-tag>
           </div>
           <div v-else>标签:&nbsp&nbsp&nbsp&nbsp暂无</div>
-
         </div>
       </div>
-
     </div>
 
+    <div>
+      <el-dialog class="dialog" title="选择保存到的笔记本" :visible.sync="show_chooseNoteBook" width="30%">
+        <div>
+          <template>
+            <el-select class="select" v-model="value" filterable placeholder="请选择">
+              <el-option
+                v-for="item in this.list"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              >
+              </el-option>
+            </el-select>
+          </template>
+        </div>
+
+        <div slot="footer" style="text-align: center;">
+          <el-button type="primary" @click="copyNote">确 定</el-button>
+          <el-button @click="show_chooseNoteBook = false">取 消</el-button>
+        </div>
+      </el-dialog>
+    </div>
   </div>
 
 </template>
@@ -115,19 +174,24 @@
     data () {
       return {
         noteId: this.$route.params.noteId,
-//        likeCnt: 538,
-        liked: false,
         tagsType: 'warning',
         unlockPopoverVisible: false,
-        lockPopoverVisible: false
+        lockPopoverVisible: false,
+        show_chooseNoteBook: false,
+        list: [],
+        value: []
       }
     },
     computed: {
       ...mapState('note', {
-        curNote: state => state.curNote
+        curNote: state => state.curNote,
+        isLikedNote: state => state.isLikingNote
       }),
       ...mapState('auth', {
         user: state => state.user
+      }),
+      ...mapState('notebook', {
+        myNotebooks: state => state.myNotebooks
       }),
       formatContent: function () {
         return '<h1>' + this.curNote.note.title + '</h1>' + this.curNote.note.content
@@ -137,28 +201,47 @@
       this.fetchNoteDetail({
         noteId: this.noteId,
         onSuccess: (detail) => {
-          console.log('NoteViewPane created onSuccess')
           console.log(detail)
         },
         onError: (msg) => {
-          console.log('error')
           console.log(msg)
           this.$message.error(msg)
           router.back()
         }
       })
+      this.isLikingCurNote({
+        noteId: this.noteId,
+        userId: this.user.id,
+        onSuccess: () => {},
+        onError: () => {}
+      })
     },
     methods: {
       ...mapActions('note', [
-        'fetchNoteDetail', 'fetchWorkbenchNoteDetail', 'deleteNote', 'editNotePermission'
+        'fetchNoteDetail', 'fetchWorkbenchNoteDetail', 'deleteNote', 'editNotePermission', 'isLikingCurNote', 'likeCurNote', 'unlikeCurNote', 'createNote'
+      ]),
+      ...mapActions('notebook', [
+        'fetchMyNotebooks'
       ]),
       handleLike () {
-        this.liked = true
-        this.likeCnt += 1
+        console.log('handleLike')
+        console.log(this.isLikedNote)
+        this.likeCurNote({
+          noteId: this.noteId,
+          userId: this.user.id,
+          onSuccess: () => {},
+          onError: () => {}
+        })
       },
       cancelLike () {
-        this.liked = false
-        this.likeCnt -= 1
+        console.log('cancelLike')
+        console.log(this.isLikedNote)
+        this.unlikeCurNote({
+          noteId: this.noteId,
+          userId: this.user.id,
+          onSuccess: () => {},
+          onError: () => {}
+        })
       },
       deleteCurNote () {
         this.$confirm('确认删除该笔记 ?', '提示', {
@@ -260,6 +343,37 @@
 //          doc.addImage(imgData, 'PNG', 10, 10);
 //          doc.save('sample-file.pdf');
         })
+      },
+      saveToMyNotebook () {
+        this.show_chooseNoteBook = true
+        this.fetchMyNotebooks({
+          userId: this.user.id,
+          onSuccess: () => {},
+          onError: (msg) => this.$message.error(msg)
+        })
+        this.list = this.myNotebooks.map(item => {
+          return {value: item.id, label: item.notebook_name}
+        })
+      },
+      copyNote () {
+        console.log('NoteViewPane 359')
+        console.log(this.curNote.note)
+        this.createNote({
+          noteInfo: {
+            userId: this.user.id,
+            notebookId: this.value[0],
+            noteTitle: '[转]' + this.curNote.note.title,
+            noteContent: this.curNote.note.content,
+            permission: 'public'
+          },
+          onSuccess: () => {
+            this.show_chooseNoteBook = false
+            router.push({name: 'notes', params: {userId: this.user.id}})
+          },
+          onError: () => {
+            this.$message.error('创建失败')
+          }
+        })
       }
     }
   }
@@ -329,4 +443,27 @@
   .el-button + .el-button {
     margin-left: 0px;
   }
+
+  .el-input-group__append div.el-select .el-input__inner, /deep/
+  .el-input-group__append div.el-select:hover .el-input__inner, /deep/
+  .el-input-group__prepend div.el-select .el-input__inner, /deep/
+  .el-input-group__prepend div.el-select:hover /deep/ .el-input__inner {
+    font-size: 13px;
+    width: 101px;
+    color: rgb(72, 106, 87);
+  }
+
+  .el-input-group__append, /deep/ .el-input-group__prepend {
+    color: rgb(83, 113, 96);
+  }
+
+  .dialog {
+    z-index: 2000 !important;
+  }
+
+  .el-select-dropdown__item {
+    font-family: sans-serif;
+  }
+
+
 </style>

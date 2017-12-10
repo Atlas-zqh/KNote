@@ -23,7 +23,6 @@
           <el-menu-item index="4-2" @click="goSignOut">退出登录</el-menu-item>
         </el-submenu>
 
-
         <el-submenu index="2">
           <template slot="title">我的工作台</template>
           <el-menu-item index="2-1" @click="jumpToWorkbench">进入工作台</el-menu-item>
@@ -197,7 +196,7 @@
             userId: this.user.id,
             notebookId: this.value[0],
             noteTitle: this.title.title,
-            noteContent: '',
+            noteContent: "",
             permission: 'public'
           },
           onSuccess: () => {

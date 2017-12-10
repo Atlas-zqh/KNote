@@ -124,3 +124,42 @@ export function addNote (callback, body) {
     callback(error.response)
   })
 }
+
+export function likeNote (callback, noteId, userId) {
+  axios.get('note/like', {
+    params: {
+      noteId: noteId,
+      userId: userId
+    }
+  }).then(function (response) {
+    callback(response.data)
+  }).catch(function (error) {
+    callback(error)
+  })
+}
+
+export function unlikeNote (callback, noteId, userId) {
+  axios.get('note/unlike', {
+    params: {
+      noteId: noteId,
+      userId: userId
+    }
+  }).then(function (response) {
+    callback(response.data)
+  }).catch(function (error) {
+    callback(error)
+  })
+}
+
+export function isLikingNote (callback, noteId, userId) {
+  axios.get('note/isLikingNote', {
+    params: {
+      noteId: noteId,
+      userId: userId
+    }
+  }).then(function (response) {
+    callback(response.data)
+  }).catch(function (error) {
+    callback(error)
+  })
+}

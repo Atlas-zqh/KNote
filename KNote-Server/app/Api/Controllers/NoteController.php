@@ -262,14 +262,18 @@ class NoteController extends BaseController
         $user_id = $request->userId;
         $notebook_id = $request->notebookId;
         $title = $request->noteTitle;
-//        $note_content = $request->noteContent;
+        $note_content = $request->noteContent;
         $permission = $request->permission;
 
         $note = new Note();
         $note->user_id = $user_id;
         $note->notebook_id = $notebook_id;
         $note->title = $title;
-        $note->content = '';
+        if ($note_content) {
+            $note->content = $note_content;
+        } else {
+            $note->content = '';
+        }
         $note->is_valid = true;
         $note->permission = $permission;
 
@@ -296,12 +300,12 @@ class NoteController extends BaseController
      */
     public function likeNote(Request $request)
     {
-        $userId = $request->user_id;
-        $noteId = $request->note_id;
+        $userId = $request->userId;
+        $noteId = $request->noteId;
 
         $isLiked = $this->isLikedNote($userId, $noteId);
         if ($isLiked) {
-            return response()->json(['failure' => '已经点赞！']);
+            return response()->json(['error' => '已经点赞！']);
         }
 
         DB::table('likes')->insert(
@@ -319,12 +323,12 @@ class NoteController extends BaseController
      */
     public function cancelLike(Request $request)
     {
-        $userId = $request->user_id;
-        $noteId = $request->note_id;
+        $userId = $request->userId;
+        $noteId = $request->noteId;
 
         $isLiked = $this->isLikedNote($userId, $noteId);
         if (!$isLiked) {
-            return response()->json(['failure' => '尚未点赞！']);
+            return response()->json(['error' => '尚未点赞！']);
         }
 
         DB::table('likes')->where(
@@ -342,8 +346,8 @@ class NoteController extends BaseController
      */
     public function isLikingNote(Request $request)
     {
-        $userId = $request->user_id;
-        $noteId = $request->note_id;
+        $userId = $request->userId;
+        $noteId = $request->noteId;
 
         $result = $this->isLikedNote($userId, $noteId);
         return response()->json(['isLiking' => $result]);
