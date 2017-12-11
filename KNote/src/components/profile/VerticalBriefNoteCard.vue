@@ -30,7 +30,7 @@
     props: ['briefNote'],
     methods: {
       jumpToNoteDetail () {
-        router.push({name: 'noteview', params: {noteId: this.briefNote.id}})
+        router.push({name: 'noteview', params: {userId: this.briefNote.user_id, noteId: this.briefNote.id}})
       }
     }
   }
