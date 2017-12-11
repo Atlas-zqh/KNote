@@ -163,6 +163,7 @@
   import html2canvas from 'html2canvas'
   import JsPDF from 'jspdf'
   import ElPopover from '../../../../node_modules/element-ui/packages/popover/src/main.vue'
+  import * as axios from 'axios'
   //  import * as rasterizeHTML from 'rasterizehtml';
 
   export default {
@@ -218,7 +219,8 @@
     },
     methods: {
       ...mapActions('note', [
-        'fetchNoteDetail', 'fetchWorkbenchNoteDetail', 'deleteNote', 'editNotePermission', 'isLikingCurNote', 'likeCurNote', 'unlikeCurNote', 'createNote'
+        'fetchNoteDetail', 'fetchWorkbenchNoteDetail', 'deleteNote', 'editNotePermission',
+        'isLikingCurNote', 'likeCurNote', 'unlikeCurNote', 'createNote', 'fetchPDF'
       ]),
       ...mapActions('notebook', [
         'fetchMyNotebooks'
@@ -315,34 +317,22 @@
         )
       },
       downloadAsPDF () {
-//        console.log(document.getElementById('content'))
-//        console.log(document.body)
         let _this = this
-        html2canvas(document.getElementById('pdf-wrap')).then(function (canvas) {
-//          // 返回图片dataURL，参数：图片格式和清晰度(0-1)
-//          var pageData = canvas.toDataURL('image/png', 1.0);
-//
-//          // 方向默认竖直，尺寸ponits，格式a4[595.28,841.89]
-//          var pdf = new JsPDF('', 'pt', 'a4');
-//
-//          // addImage后两个参数控制添加图片的尺寸，此处将页面高度按照a4纸宽高比列进行压缩
-//          pdf.addImage(pageData, 'PNG', 0, 0, 595.28, 592.28/canvas.width * canvas.height );
-//          pdf.save(_this.curNote.note.title)
-//        })
-//        let pdf = new JsPDF('l', 'pt', 'a4');
-//        let options = {
-//          pagesplit: true
-//        };
-//
-//        pdf.addHTML(document.getElementById('content'), 0, 0, options, function(){
-//          pdf.save("test.pdf");
-          document.body.appendChild(canvas)
-//          let imgData = canvas.toDataURL(
-//            'image/png');
-//          let doc = new JsPDF('p', 'mm');
-//          doc.addImage(imgData, 'PNG', 10, 10);
-//          doc.save('sample-file.pdf');
+        axios({
+          method: 'post',
+          url: 'download',
+          responseType: 'arraybuffer',
+          data: {
+            noteId: this.noteId
+          }
         })
+          .then(function (response) {
+            let blob = new Blob([response.data], {type: 'application/pdf'})
+            let link = document.createElement('a')
+            link.href = window.URL.createObjectURL(blob)
+            link.download = _this.curNote.note.title + '.pdf'
+            link.click()
+          })
       },
       saveToMyNotebook () {
         this.show_chooseNoteBook = true

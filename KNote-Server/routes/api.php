@@ -62,5 +62,7 @@ $api->version('v1', function ($api) {
         $api->get('user/following', 'UserController@getFollowing');
 
         $api->get('search/result', 'SearchController@getSearchResult');
+
+        $api->post('download','NoteController@getPDF');
     });
 });

@@ -8,12 +8,12 @@
 
 namespace App\Api\Controllers;
 
-
 use App\Note;
 use App\Notebook;
 use App\User;
 use Dingo\Api\Http\Request;
 use Illuminate\Support\Facades\DB;
+use TCPDF;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
@@ -461,8 +461,66 @@ class NoteController extends BaseController
         }
     }
 
-    public function getTagsBuUser(Request $request)
+    public function getPDF(Request $request)
     {
+        $noteId = $request->noteId;
 
+        $note = DB::table('notes')->where('id', $noteId)->first();
+        $user = DB::table('users')->where('id', $note->user_id)->first();
+        $notebook = DB::table('notebooks')->where('id', $note->notebook_id)->first();
+
+        $tags = DB::table('tags')
+            ->join('note_tag_relations', 'tags.id', '=', 'note_tag_relations.tag_id')
+            ->select('tags.tag_content as content')
+            ->where('note_tag_relations.note_id', $noteId)->get();
+        // create new PDF document
+        $pdf = new \TCPDF();
+        // 设置文档信息
+        $pdf->SetCreator('KNOTE');
+        $pdf->SetAuthor($user->name);
+        $pdf->SetTitle($note->title);
+        $pdf->SetSubject($note->title);
+
+        // 设置页眉和页脚信息
+        $pdf->setFooterData([0, 64, 0], [0, 64, 128]);
+        $pdf->setPrintHeader(false);
+
+        // 设置页眉和页脚字体
+        $pdf->setFooterFont(['helvetica', '', '8']);
+
+        // 设置默认等宽字体
+        $pdf->SetDefaultMonospacedFont('courier');
+
+        // 设置间距
+        $pdf->SetMargins(15, 15, 15);//页面间隔
+        $pdf->SetFooterMargin(10);//页脚bottom间隔
+
+        // 设置分页
+        $pdf->SetAutoPageBreak(true, 25);
+
+        // set default font subsetting mode
+        $pdf->setFontSubsetting(true);
+
+        //设置字体 stsongstdlight支持中文
+        $pdf->SetFont('droidsansfallback', '', 14);
+
+        $tagStr = '';
+        foreach ($tags as $tag) {
+            $tagStr .= '"' . $tag->content . '"  ';
+        }
+
+        //第一页
+        $pdf->AddPage();
+        $pdf->writeHTML('<h1 style="text-align: left;color: #00815d;font-size: 30px;">' . $note->title . '</h1>');
+        $pdf->writeHTML('<div style="text-align: left;color: #2A8146;font-weight: bold">作者:  ' . $user->name . '</div>');
+        $pdf->writeHTML('<div style="text-align: left;color: #2A8146;font-weight: bold">笔记本:  ' . $notebook->notebook_name . '</div>');
+        $pdf->writeHTML('<div style="text-align: left;color: #2A8146;font-weight: bold">相关标签:  ' . $tagStr . '</div>');
+        $pdf->writeHTML('<div style="text-align: left;color: #2A8146;font-weight: bold">创建时间:  ' . $note->created_at . '</div>');
+        $pdf->writeHTML('<hr style="padding-top: 20px;padding-bottom: 20px">');
+        $pdf->writeHTML($note->content);
+
+        //输出PDF
+        $res = $pdf->Output('/Users/keenan/Documents/workspace/KNote/KNote-Server/t.pdf', 'F');//I输出、D下载
+        return response()->file('/Users/keenan/Documents/workspace/KNote/KNote-Server/t.pdf');
     }
 }

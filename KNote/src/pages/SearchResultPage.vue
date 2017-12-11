@@ -7,7 +7,7 @@
         <div v-show="searchresult.myNotes.length!=0">
           <div class="text item">
             <i class="el-icon-search"></i>
-            我的笔记中包含"a"的
+            我的笔记中包含"{{searchresult.searchContent}}"的
           </div>
           <el-row :gutter="10" style="margin-left: -5px;margin-right: 6%;">
             <vertical-brief-note-card v-for="note in searchresult.myNotes" :briefNote="note"></vertical-brief-note-card>
@@ -18,7 +18,7 @@
         <div v-show="searchresult.myNotebooks.length!=0">
           <div class="text item">
             <i class="el-icon-search"></i>
-            我的笔记本中包含"a"的
+            我的笔记本中包含"{{searchresult.searchContent}}"的
           </div>
           <el-row :gutter="10" style="margin-left: -5px;margin-right: 6%">
             <search-brief-notebook-card v-for="notebook in searchresult.myNotebooks"
@@ -29,7 +29,7 @@
         <div v-show="searchresult.tags.length!=0">
           <div class="text item">
             <i class="el-icon-search"></i>
-            我的笔记标签中包含"a"的
+            我的笔记标签中包含"{{searchresult.searchContent}}"的
           </div>
           <el-row :gutter="10" style="margin-left: -5px;margin-right: 6%;">
             <brief-note-tag-card v-for="noteInfo in searchresult.tags" :noteInfo="noteInfo"></brief-note-tag-card>
@@ -40,7 +40,7 @@
         <div v-show="searchresult.users.length!=0">
           <div class="text item">
             <i class="el-icon-search"></i>
-            用户名中包含"a"的
+            用户名中包含"{{searchresult.searchContent}}"的
           </div>
           <el-row :gutter="10" style="margin-left: -5px;margin-right: 6%;">
             <brief-user-profile-card v-for="userProfile in searchresult.users"
@@ -51,7 +51,7 @@
         <div v-show="searchresult.othersNotes.length!=0">
           <div class="text item">
             <i class="el-icon-search"></i>
-            他人的笔记中包含"a"的
+            他人的笔记中包含"{{searchresult.searchContent}}"的
           </div>
           <el-row :gutter="10" style="margin-left: -5px;margin-right: 6%;">
             <vertical-brief-note-card v-for="note in searchresult.othersNotes"
@@ -63,7 +63,7 @@
         <div v-show="searchresult.othersNotebooks.length!=0">
           <div class="text item">
             <i class="el-icon-search"></i>
-            他人的笔记本中包含"a"的
+            他人的笔记本中包含"{{searchresult.searchContent}}"的
           </div>
           <el-row :gutter="10" style="margin-left: -5px;margin-right: 6%">
             <search-brief-notebook-card v-for="notebook in searchresult.othersNotebooks"

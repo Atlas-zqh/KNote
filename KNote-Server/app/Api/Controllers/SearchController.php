@@ -69,7 +69,8 @@ class SearchController extends BaseController
                 ['tags.is_valid', '=', true]
             ])->get();
 
-        return ['othersNotebooks' => $othersNotebooks,
+        return ['searchContent' => $keyword,
+            'othersNotebooks' => $othersNotebooks,
             'myNotebooks' => $myNotebooks,
             'othersNotes' => $othersNotes,
             'myNotes' => $myNotes,
