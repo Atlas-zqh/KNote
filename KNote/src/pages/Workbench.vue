@@ -112,6 +112,15 @@
       this.intervalId = setInterval(this.autoSaveContent, 30000)
     },
     beforeDestroy (to, from, next) {
+      this.editNoteContent({
+        noteContent: {
+          noteId: this.workbenchNote.note.id,
+          noteTitle: this.title.title,
+          noteContent: this.content.content
+        },
+        onSuccess: () => {},
+        onError: () => {}
+      })
       this.setWorkbenchNoteNull()
       clearInterval(this.intervalId)
     },
