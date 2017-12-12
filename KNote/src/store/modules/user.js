@@ -43,6 +43,7 @@ const actions = {
         }
       } else {
         console.log('followCurUser userId ', userId)
+        dispatch('auth/refreshUser', {onSuccess: onSuccess}, {root: true})
         dispatch('fetchUserInfo', followedUserId)
         dispatch('isFollowingCurUser', {
           userId: userId,
@@ -61,6 +62,7 @@ const actions = {
           onError(data.error)
         }
       } else {
+        dispatch('auth/refreshUser', {onSuccess: onSuccess}, {root: true})
         dispatch('fetchUserInfo', followedUserId)
         dispatch('isFollowingCurUser', {
           userId: userId,

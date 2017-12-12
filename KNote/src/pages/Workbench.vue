@@ -81,6 +81,7 @@
       ]),
       rotateButton () {
         this.autoSaving = true
+        this.autoSaveContent()
       },
       stopRotate () {
         this.autoSaving = false

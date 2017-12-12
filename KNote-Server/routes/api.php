@@ -63,6 +63,11 @@ $api->version('v1', function ($api) {
 
         $api->get('search/result', 'SearchController@getSearchResult');
 
-        $api->post('download','NoteController@getPDF');
+        $api->post('download', 'NoteController@getPDF');
+
+        $api->get('admin/search', 'AdminController@searchUsers');
+        $api->get('admin/block', 'AdminController@deleteUser');
+        $api->get('admin/unblock', 'AdminController@unblockUser');
+        $api->get('admin/reset', 'AdminController@resetUserPassword');
     });
 });

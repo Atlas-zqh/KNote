@@ -22,7 +22,10 @@
           <i class="el-icon-document"></i>
           <span slot="title">{{notebook.notebook_name}}</span>
         </template>
-        <el-menu-item v-for="note in notebook.notes" :index="note.id" @click="handleChosen(note.id)">{{note.title}}
+        <el-menu-item v-for="note in notebook.notes" :index="note.id" @click="handleChosen(note.id)">
+          <div style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">
+            {{note.title}}
+          </div>
         </el-menu-item>
       </el-submenu>
     </el-menu>

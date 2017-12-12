@@ -1,22 +1,28 @@
 <template>
   <div>
-    <el-menu default-active=1       class="el-menu-demo" mode="horizontal">
+    <el-menu default-active=1              class="el-menu-demo" mode="horizontal">
       <div class="nav-wrapper">
         <div class="logo-wrapper" @click="jumpToIndex">
           <img src="../../assets/logo_with_word.png" width="100px"/>
         </div>
-        <div class="search-bar-wrapper">
+        <div class="search-bar-wrapper" v-show="user==null||(user!=null&&user.permission=='normal')">
           <el-input placeholder="输入搜索内容" icon="search" v-model="search_input"
                     :on-icon-click="showSearchResult"></el-input>
         </div>
         <el-menu-item v-if="user==null" index="3" @click="sign_in">登录</el-menu-item>
-        <el-submenu v-else index="4">
+        <el-submenu v-else index="4" v-show="user.permission!=='admin'">
           <template slot="title">我的</template>
           <el-menu-item index="4-1" @click="jumpToMyPage">个人主页</el-menu-item>
           <el-menu-item index="4-2" @click="goSignOut">退出登录</el-menu-item>
         </el-submenu>
 
-        <el-submenu index="2">
+        <el-submenu v-show="user!=null&&user.permission=='admin'" index="5">
+          <template slot="title">管理员</template>
+          <el-menu-item index="5-1" @click="goUserManagement">用户管理</el-menu-item>
+          <el-menu-item index="5-2" @click="goSignOut">退出登录</el-menu-item>
+        </el-submenu>
+
+        <el-submenu index="2" v-show="user==null||(user!=null&&user.permission=='normal')">
           <template slot="title">我的工作台</template>
           <el-menu-item index="2-1" @click="jumpToWorkbench">进入工作台</el-menu-item>
           <el-menu-item index="2-2" @click="showChooseNotebook">创建新笔记</el-menu-item>
@@ -33,7 +39,7 @@
           <template>
             <el-select class="select" v-model="value" filterable placeholder="请选择">
               <el-option
-                v-for="item in this.list"
+                v-for="item in list"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
@@ -124,41 +130,40 @@
         this.$modal.show('sign-in')
       },
       showChooseNotebook () {
-        if (this.user === null) {
+        if (this.user === null || this.user === undefined) {
           this.$modal.show('sign-in')
         } else {
           this.show_chooseNoteBook = true
           this.fetchMyNotebooks({
             userId: this.user.id,
-            onSuccess: () => {},
+            onSuccess: () => {
+              this.list = this.myNotebooks.map(item => {
+                return {value: item.id, label: item.notebook_name}
+              })
+            },
             onError: (msg) => this.$message.error(msg)
           })
-          this.list = this.myNotebooks.map(item => {
-            return {value: item.id, label: item.notebook_name}
-          })
-
-          console.log(this.list)
         }
       },
       jumpToIndex () {
         router.push('/')
       },
       jumpToMyNotebooks () {
-        if (this.user === null) {
+        if (this.user === null || this.user === undefined) {
           this.$modal.show('sign-in')
         } else {
           router.push({name: 'notebooks', params: {userId: this.user.id}})
         }
       },
       jumpToWorkbench () {
-        if (this.user === null) {
+        if (this.user === null || this.user === undefined) {
           this.$modal.show('sign-in')
         } else {
           router.push({name: 'workbench', params: {userId: this.user.id}})
         }
       },
       jumpToMyNotes () {
-        if (this.user === null) {
+        if (this.user === null || this.user === undefined) {
           this.$modal.show('sign-in')
         } else {
           router.push({name: 'notes', params: {userId: this.user.id}})
@@ -198,16 +203,23 @@
         })
       },
       showSearchResult () {
-        this.fetchSearchResult({
-          userId: this.user.id,
-          keyword: this.search_input,
-          onSuccess: () => {
-            router.push({name: 'searchResultPage'})
-          },
-          onError: () => {
-            this.$message.error('出错了！请稍后重试！')
-          }
-        })
+        if (this.user === null || this.user === undefined) {
+          this.$modal.show('sign-in')
+        } else {
+          this.fetchSearchResult({
+            userId: this.user.id,
+            keyword: this.search_input,
+            onSuccess: () => {
+              router.push({name: 'searchResultPage'})
+            },
+            onError: () => {
+              this.$message.error('出错了！请稍后重试！')
+            }
+          })
+        }
+      },
+      goUserManagement () {
+        router.push({name: 'userManagement'})
       }
     }
   }

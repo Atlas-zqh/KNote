@@ -31,7 +31,7 @@ const actions = {
     let token = localStorage.getItem('token')
     authApi.currentUser(data => {
       commit('saveUser', data.user)
-      if (onSuccess) {
+      if (onSuccess && state.user !== undefined) {
         onSuccess(state.user.name)
       }
     }, token)

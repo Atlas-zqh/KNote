@@ -66,6 +66,7 @@
   import { Form, FormItem, Button, Tabs, TabPane } from 'element-ui'
   import ElInput from '../../../node_modules/element-ui/packages/input/src/input.vue'
   import { mapActions, mapState } from 'vuex'
+  import router from '../../router'
 
   export default {
     name: 'signInPane',
@@ -168,9 +169,10 @@
     },
     methods: {
       ...mapActions('auth', [
-        'signIn', 'signUp'
+        'signIn', 'signUp', 'signOut'
       ]),
       submitLoginForm (formName) {
+        let _this = this
         this.$refs[formName].validate((valid) => {
           if (valid) {
             this.signIn({
@@ -179,10 +181,26 @@
                 password: this.loginForm.loginPass
               },
               onSuccess: (username) => {
-                this.confirmSignIn(username)
+                if (this.user.is_valid == false) {
+                  this.$modal.hide('sign-in')
+                  this.$confirm('您的账户已被封禁，暂时无法使用。', '警告️', {
+                    showCancelButton: false,
+                    closeOnClickModal: false,
+                    closeOnPressEscape: false,
+                    confirmButtonText: '确定',
+                    type: 'warning'
+                  }).then(() => {
+                    _this.signOut({
+                      onSuccess: () => {
+                        router.push('/')
+                      }
+                    })
+                  })
+                } else {
+                  this.confirmSignIn(username)
+                }
               },
               onError: () => {
-//                console.log(error)
                 this.$message.error('邮箱或密码错误，请重试！')
               }
             })

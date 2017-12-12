@@ -289,7 +289,7 @@ class NoteController extends BaseController
         $notebook->notes_count += 1;
         $notebook->save();
 
-        return response()->json(['success' => '创建成功', 'noteId' => $note->id]);
+        return response()->json(['success' => '创建成功', 'noteId' => $note->id, 'userId' => $user_id]);
     }
 
     /**

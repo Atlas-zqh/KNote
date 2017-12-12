@@ -3,9 +3,11 @@
     <div class="user-info-wrapper">
 
       <div class="username-wrapper">
-        <a @click="jumpToUser">
-          {{userInfo[0].name}}
-        </a>
+        <div v-show="userInfo!==null&&userInfo!==undefined">
+          <a @click="jumpToUser">
+            {{userInfo[0].name}}
+          </a>
+        </div>
         <div v-show="user!=null&&user.id!=userId">
           <el-button v-show="!followingCurUser" type="primary" class="follow-button-wrapper" @click="follow">+ 关注
           </el-button>
@@ -194,7 +196,7 @@
   }
 
   .follow-button-wrapper {
-    margin-left: 220px;
+    margin-left: 180px;
     position: absolute;
     top: 50%;
     transform: translate(0, 50%);

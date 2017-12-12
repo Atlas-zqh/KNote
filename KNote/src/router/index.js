@@ -10,6 +10,7 @@ import noteView from '@/pages/NoteView.vue'
 import profileEdit from '@/pages/ProfileEdit.vue'
 import notebookNote from '@/pages/NotebookNote.vue'
 import searchResultPage from '@/pages/SearchResultPage'
+import userManagement from '@/pages/UserManagement'
 
 Vue.use(Router)
 
@@ -64,6 +65,11 @@ export default new Router({
       path: '/search',
       name: 'searchResultPage',
       component: searchResultPage
+    },
+    {
+      path: '/admin',
+      name: 'userManagement',
+      component: userManagement
     }
   ]
 })

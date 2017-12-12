@@ -8,6 +8,7 @@ import user from './modules/user'
 import note from './modules/note'
 import notebook from './modules/notebook'
 import search from './modules/search'
+import admin from './modules/admin'
 import createLogger from 'vuex/dist/logger'
 
 Vue.use(Vuex)
@@ -23,7 +24,8 @@ export default new Vuex.Store({
     user,
     note,
     notebook,
-    search
+    search,
+    admin
   },
   strict: debug,
   plugins: debug ? [createLogger()] : []

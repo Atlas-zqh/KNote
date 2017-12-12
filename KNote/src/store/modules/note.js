@@ -117,9 +117,11 @@ const actions = {
           onError(data)
         }
       } else {
-        console.log('createNote note.js')
-        console.log(data)
-        console.log(data.noteId)
+        dispatch('notebook/fetchMyNotebooks', {
+          userId: data.userId,
+          onSuccess: onSuccess,
+          onError: onError
+        }, {root: true})
         dispatch('refreshWorkbenchNoteDetail', {noteId: data.noteId, onSuccess: onSuccess, onError: onError})
         onSuccess(data)
       }

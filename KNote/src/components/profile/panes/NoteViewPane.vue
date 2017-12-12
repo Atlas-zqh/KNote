@@ -45,7 +45,9 @@
             placement="top-start"
             width="150"
             trigger="hover"
-            content="删除该笔记">
+            content="删除该笔记"
+            v-show="curNote.note.user_id==user.id"
+          >
             <el-button slot="reference" type="text" class="operation-wrapper">
               <i class="el-icon-ali-delete" @click="deleteCurNote"></i>
             </el-button>
@@ -56,43 +58,46 @@
             placement="top-start"
             width="150"
             trigger="hover"
-            content="编辑">
+            content="编辑"
+            v-show="curNote.note.user_id==user.id">
             <el-button slot="reference" type="text" class="operation-wrapper">
               <i class="el-icon-ali-write" @click="jumpToWorkbench"></i>
             </el-button>
           </el-popover>
 
-          <el-popover
-            ref="unlockPopover"
-            placement="top"
-            width="160"
-            v-model="unlockPopoverVisible"
-            v-show="curNote.note.permission=='private'">
-            <p>是否将笔记公开？</p>
-            <div style="text-align: right;margin: 0">
-              <el-button size="mini" type="primary" @click="unlockNote">确定</el-button>
-              <el-button size="mini" type="text" @click="unlockPopoverVisible=false">取消</el-button>
-            </div>
-            <el-button slot="reference" type="text" class="operation-wrapper">
-              <i class="el-icon-ali-unlock"></i>
-            </el-button>
-          </el-popover>
-          <el-popover
-            ref="lockPopover"
-            placement="top"
-            width="160"
-            v-model="lockPopoverVisible"
-            v-show="curNote.note.permission=='public'"
-          >
-            <p>是否将笔记设为私有？</p>
-            <div style="text-align: right;margin: 0">
-              <el-button size="mini" type="primary" @click="lockNote">确定</el-button>
-              <el-button size="mini" type="text" @click="lockPopoverVisible=false">取消</el-button>
-            </div>
-            <el-button slot="reference" type="text" class="operation-wrapper">
-              <i class="el-icon-ali-lock"></i>
-            </el-button>
-          </el-popover>
+          <div v-show="curNote.note.user_id==user.id">
+            <el-popover
+              ref="unlockPopover"
+              placement="top"
+              width="160"
+              v-model="unlockPopoverVisible"
+              v-show="curNote.note.permission=='private'">
+              <p>是否将笔记公开？</p>
+              <div style="text-align: right;margin: 0">
+                <el-button size="mini" type="primary" @click="unlockNote">确定</el-button>
+                <el-button size="mini" type="text" @click="unlockPopoverVisible=false">取消</el-button>
+              </div>
+              <el-button slot="reference" type="text" class="operation-wrapper">
+                <i class="el-icon-ali-unlock"></i>
+              </el-button>
+            </el-popover>
+            <el-popover
+              ref="lockPopover"
+              placement="top"
+              width="160"
+              v-model="lockPopoverVisible"
+              v-show="curNote.note.permission=='public'"
+            >
+              <p>是否将笔记设为私有？</p>
+              <div style="text-align: right;margin: 0">
+                <el-button size="mini" type="primary" @click="lockNote">确定</el-button>
+                <el-button size="mini" type="text" @click="lockPopoverVisible=false">取消</el-button>
+              </div>
+              <el-button slot="reference" type="text" class="operation-wrapper">
+                <i class="el-icon-ali-lock"></i>
+              </el-button>
+            </el-popover>
+          </div>
         </div>
       </div>
 
@@ -400,6 +405,10 @@
     background-color: rgba(228, 241, 235, 0.11);
     word-break: break-all;
     text-align: left;
+  }
+
+  .note-content-wrapper /deep/ img {
+    width: 100%;
   }
 
   .note-info-wrapper {
