@@ -1,8 +1,10 @@
 import axios from 'axios'
 
 export function getCountInfo (callback, userId) {
+  let token = localStorage.getItem('token')
   axios.get('/user/userInfo', {
     params: {
+      token: token,
       userId: userId
     }
   })
@@ -15,8 +17,10 @@ export function getCountInfo (callback, userId) {
 }
 
 export function getFrequentTags (callback, userId) {
+  let token = localStorage.getItem('token')
   axios.get('user/frequentTags', {
     params: {
+      token: token,
       userId: userId
     }
   }).then((response) => {
@@ -27,8 +31,10 @@ export function getFrequentTags (callback, userId) {
 }
 
 export function getHotNotes (callback, userId) {
+  let token = localStorage.getItem('token')
   axios.get('user/hotNotes', {
     params: {
+      token: token,
       userId: userId
     }
   }).then((response) => {

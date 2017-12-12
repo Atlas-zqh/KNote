@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-menu default-active=1              class="el-menu-demo" mode="horizontal">
+    <el-menu default-active=1               class="el-menu-demo" mode="horizontal">
       <div class="nav-wrapper">
         <div class="logo-wrapper" @click="jumpToIndex">
           <img src="../../assets/logo_with_word.png" width="100px"/>
@@ -188,7 +188,7 @@
         this.createNote({
           noteInfo: {
             userId: this.user.id,
-            notebookId: this.value[0],
+            notebookId: this.value,
             noteTitle: this.title.title,
             noteContent: '',
             permission: 'public'

@@ -71,7 +71,7 @@
               placement="top"
               width="160"
               v-model="unlockPopoverVisible"
-              v-show="curNote.note.permission=='private'">
+              v-show="curNote.notebook[0].permission=='public'&&curNote.note.permission=='private'">
               <p>是否将笔记公开？</p>
               <div style="text-align: right;margin: 0">
                 <el-button size="mini" type="primary" @click="unlockNote">确定</el-button>
@@ -86,7 +86,7 @@
               placement="top"
               width="160"
               v-model="lockPopoverVisible"
-              v-show="curNote.note.permission=='public'"
+              v-show="curNote.notebook[0].permission=='public'&&curNote.note.permission=='public'"
             >
               <p>是否将笔记设为私有？</p>
               <div style="text-align: right;margin: 0">
@@ -343,11 +343,12 @@
         this.show_chooseNoteBook = true
         this.fetchMyNotebooks({
           userId: this.user.id,
-          onSuccess: () => {},
+          onSuccess: () => {
+            this.list = this.myNotebooks.map(item => {
+              return {value: item.id, label: item.notebook_name}
+            })
+          },
           onError: (msg) => this.$message.error(msg)
-        })
-        this.list = this.myNotebooks.map(item => {
-          return {value: item.id, label: item.notebook_name}
         })
       },
       copyNote () {
@@ -356,7 +357,7 @@
         this.createNote({
           noteInfo: {
             userId: this.user.id,
-            notebookId: this.value[0],
+            notebookId: this.value,
             noteTitle: '[转]' + this.curNote.note.title,
             noteContent: this.curNote.note.content,
             permission: 'public'

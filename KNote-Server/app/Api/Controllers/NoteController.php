@@ -235,6 +235,19 @@ class NoteController extends BaseController
                 $auser = User::find($note_user_id);
                 $auser->notes_count -= 1;
                 $auser->save();
+
+                $notebook = Notebook::find($note->notebook_id);
+                $notebook->notes_count -= 1;
+                $notebook->save();
+                // 笔记本内的笔记数-1
+
+                // 删除标签
+                DB::tale('tags')
+                    ->join('note_tag_relations', 'note_tag_relations.tag_id', '=', 'tags.id')
+                    ->where('note_tag_relations.note_id', $note_id)
+                    ->update(['tags.is_valid' => false]);
+                // 删除标签对应关系
+                DB::table('note_tag_relations')->where('note_id', '=', $note_id)->delete();
                 return response()->json(['success' => '删除成功!']);
             } else {
                 return response()->json(['error' => '您无权限删除该笔记']);
@@ -274,8 +287,14 @@ class NoteController extends BaseController
         } else {
             $note->content = '';
         }
+
+        $notebook = Notebook::find($notebook_id);
+        if ($notebook->permission == 'public') {
+            $note->permission = $permission;
+        } else {
+            $note->permission = 'private';
+        }
         $note->is_valid = true;
-        $note->permission = $permission;
 
         $note->save();
 
@@ -285,7 +304,6 @@ class NoteController extends BaseController
         $user->save();
 
         // 笔记本内的笔记数+1
-        $notebook = Notebook::find($notebook_id);
         $notebook->notes_count += 1;
         $notebook->save();
 

@@ -109,7 +109,7 @@
       }
     },
     mounted: function () {
-      this.intervalId = setInterval(this.autoSaveContent, 60000)
+      this.intervalId = setInterval(this.autoSaveContent, 30000)
     },
     beforeDestroy (to, from, next) {
       this.setWorkbenchNoteNull()
