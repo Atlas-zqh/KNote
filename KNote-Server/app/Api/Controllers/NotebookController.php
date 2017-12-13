@@ -97,6 +97,7 @@ class NotebookController extends BaseController
         $notebook_name = $request->notebookName;
         $permission = $request->permission;
 
+        DB::table('notes')->where('notebook_id', $notebook_id)->update(['permission' => $permission]);
         $notebook = Notebook::find($notebook_id);
         $notebook->notebook_name = $notebook_name;
         $notebook->permission = $permission;

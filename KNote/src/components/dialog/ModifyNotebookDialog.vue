@@ -6,13 +6,17 @@
           <el-form-item label="笔记本名称">
             <el-input v-model="notebookInfoForm.notebookName" auto-complete="off" placeholder="请输入笔记本名称"
                       style="width: 50%"></el-input>
+
           </el-form-item>
           <el-form-item label="笔记本权限">
             <el-radio class="radio" v-model="notebookInfoForm.permission" label="public">公开</el-radio>
             <el-radio class="radio" v-model="notebookInfoForm.permission" label="private">私有</el-radio>
+            <div style="font-size: 10px">* 笔记本中笔记权限将会与笔记本权限一致修改</div>
+
           </el-form-item>
         </el-form>
       </div>
+
       <div style="text-align: center">
         <el-button @click="confirm" type="primary">确定</el-button>
         <el-button @click="closeDialog">取消</el-button>
